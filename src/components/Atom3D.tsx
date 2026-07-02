@@ -38,7 +38,7 @@ function fibonacciSphere(count: number, radius: number): [number, number, number
   return pts
 }
 
-function Nucleus({
+export function Nucleus({
   protons,
   neutrons,
   color,
@@ -102,7 +102,7 @@ function Nucleus({
 
 /* ----------------------------------- shells ---------------------------------- */
 
-function Shell({
+export function Shell({
   radius,
   electrons,
   index,
@@ -124,9 +124,10 @@ function Shell({
   const tmp = useMemo(() => new THREE.Vector3(), [])
 
   // electrons live at the scene root (no rotating ancestors) so Trail world-space
-  // geometry stays correct; positions are driven per-frame on the tilted circle
-  useFrame(({ clock }) => {
-    const base = animate ? clock.elapsedTime * speed : index * 0.7
+  // geometry stays correct; positions are driven per-frame on the tilted circle.
+  // wall-clock time (not the canvas clock) keeps multiple canvases in sync.
+  useFrame(() => {
+    const base = animate ? (performance.now() / 1000) * speed : index * 0.7
     for (let i = 0; i < electrons; i++) {
       const m = refs.current[i]
       if (!m) continue
@@ -296,7 +297,7 @@ function Atom2D({ element }: { element: Element }) {
  * centered on any screen size. Re-runs on resize; preserves the current
  * viewing direction so it cooperates with OrbitControls.
  */
-function FitCameraToAtom({ maxR, margin }: { maxR: number; margin: number }) {
+export function FitCameraToAtom({ maxR, margin }: { maxR: number; margin: number }) {
   const camera = useThree((s) => s.camera)
   const size = useThree((s) => s.size)
 
@@ -319,8 +320,6 @@ interface Props {
   element: Element
   view?: AtomView
   showLabels?: boolean
-  /** hero mode: slightly further camera, no zoom */
-  hero?: boolean
 }
 
 function AtomContents({ element, view, showLabels, animate }: { element: Element; view: AtomView; showLabels: boolean; animate: boolean }) {
@@ -365,34 +364,32 @@ function AtomContents({ element, view, showLabels, animate }: { element: Element
   )
 }
 
-export default function Atom3D({ element, view = 'bohr', showLabels = false, hero = false }: Props) {
+export default function Atom3D({ element, view = 'bohr', showLabels = false }: Props) {
   const reduced = useReducedMotion()
   if (!hasWebGL()) return <Atom2D element={element} />
 
   const shellCount = element.shells.length
   const maxR = view === 'bohr' ? 1.5 + shellCount * 0.85 : (1.1 + lastSubshell(element.config).n * 0.85) * 2.4
-  const dist = hero ? maxR * 1.9 : maxR * 1.6
+  const dist = maxR * 1.6
   const animate = !reduced
 
   return (
     <Canvas
       dpr={[1, 1.6]}
-      camera={{ position: [0, dist * (hero ? 0.24 : 0.32), dist], fov: 42 }}
+      camera={{ position: [0, dist * 0.32, dist], fov: 42 }}
       gl={{ antialias: true }}
       aria-label={`3D model of ${element.name}`}
     >
       <color attach="background" args={['#05070d']} />
-      <fog attach="fog" args={hero ? ['#05070d', dist * 4, dist * 8] : ['#05070d', dist * 1.4, dist * 3.4]} />
-      {hero && <FitCameraToAtom maxR={maxR} margin={0.88} />}
+      <fog attach="fog" args={['#05070d', dist * 1.4, dist * 3.4]} />
       <ambientLight intensity={0.45} />
       <pointLight position={[10, 12, 8]} intensity={220} color="#e0f2fe" />
       <Stars radius={28} depth={18} count={900} factor={2.4} saturation={0} fade speed={animate ? 0.7 : 0} />
       <AtomContents element={element} view={view} showLabels={showLabels} animate={animate} />
       <OrbitControls
         enablePan={false}
-        enableZoom={!hero}
         minDistance={maxR * 0.7}
-        maxDistance={hero ? maxR * 9 : maxR * 3.2}
+        maxDistance={maxR * 3.2}
       />
       <EffectComposer>
         <Bloom mipmapBlur intensity={1.15} luminanceThreshold={0.85} levels={7} />

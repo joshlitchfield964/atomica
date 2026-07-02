@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { byNumber } from '../data/elements'
 
-const Atom3D = lazy(() => import('./Atom3D'))
+const HeroAtom = lazy(() => import('./HeroAtom'))
 
 const TITLE = 'ATOMICA'
 
@@ -17,18 +17,17 @@ export default function Hero({ onEnter }: { onEnter: () => void }) {
       exit={{ opacity: 0, scale: 1.08, filter: 'blur(8px)' }}
       transition={{ duration: 0.7, ease: [0.32, 0, 0.24, 1] }}
     >
-      {/* depth 0-1: the living atom fills the screen */}
-      <div className="absolute inset-0" aria-hidden>
-        <Suspense fallback={null}>
-          <Atom3D element={carbon} hero />
-        </Suspense>
-      </div>
-      {/* depth 2: readability scrim, lets the atom glow through the edges */}
+      {/* readability scrim sits between the back atom layer and the text;
+          HeroAtom's front layer (z-20) floats above the text so the orbits
+          visibly wrap around the title */}
       <div
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 z-[5]"
         style={{ background: 'radial-gradient(ellipse at center, rgba(5,7,13,0.72) 0%, rgba(5,7,13,0.35) 55%, rgba(5,7,13,0.75) 100%)' }}
         aria-hidden
       />
+      <Suspense fallback={null}>
+        <HeroAtom element={carbon} />
+      </Suspense>
 
       {/* depth 4: content */}
       <div className="pointer-events-none relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
