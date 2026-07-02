@@ -232,21 +232,14 @@ function sampleOrbital(n: number, l: number, count: number): { positions: Float3
   return { positions: positions.subarray(0, i * 3), colors: colors.subarray(0, i * 3) }
 }
 
-function OrbitalCloud({ element, animate }: { element: Element; animate: boolean }) {
-  const points = useRef<THREE.Points>(null)
+function OrbitalCloud({ element }: { element: Element }) {
   const sub = useMemo(() => lastSubshell(element.config), [element.config])
   const { positions, colors } = useMemo(() => sampleOrbital(sub.n, sub.l, 16000), [sub.n, sub.l])
 
-  useFrame((_, dt) => {
-    if (animate && points.current) {
-      points.current.rotation.y += dt * 0.14
-      points.current.rotation.z = 0.35
-    }
-  })
-
+  // static — the cloud only moves when the user drags it (OrbitControls)
   return (
     <>
-      <points ref={points} rotation={[0, 0, 0.35]}>
+      <points rotation={[0, 0, 0.35]}>
         <bufferGeometry key={`${sub.n}${sub.l}`}>
           <bufferAttribute attach="attributes-position" args={[positions, 3]} />
           <bufferAttribute attach="attributes-color" args={[colors, 3]} />
@@ -308,13 +301,15 @@ interface Props {
 function AtomContents({ element, view, showLabels, animate }: { element: Element; view: AtomView; showLabels: boolean; animate: boolean }) {
   const group = useRef<THREE.Group>(null)
 
-  useFrame((state, dt) => {
+  // one-time entrance swoop only — after that the model holds still
+  // unless the user drags it (OrbitControls, LMB)
+  useFrame((_, dt) => {
     const g = group.current
     if (!g || !animate) return
-    const k = 1 - Math.pow(0.02, dt)
-    if (g.scale.x < 0.99) g.scale.lerp(new THREE.Vector3(1, 1, 1), k)
-    g.rotation.y += (state.pointer.x * 0.25 - g.rotation.y) * k * 0.6
-    g.rotation.x += (-state.pointer.y * 0.16 - g.rotation.x) * k * 0.6
+    if (g.scale.x < 0.999) {
+      const k = 1 - Math.pow(0.02, dt)
+      g.scale.lerp(new THREE.Vector3(1, 1, 1), k)
+    }
   })
 
   const shells = element.shells
@@ -339,7 +334,7 @@ function AtomContents({ element, view, showLabels, animate }: { element: Element
           ))}
         </>
       ) : (
-        <OrbitalCloud element={element} animate={animate} />
+        <OrbitalCloud element={element} />
       )}
     </group>
   )
@@ -372,8 +367,6 @@ export default function Atom3D({ element, view = 'bohr', showLabels = false, her
         enableZoom={!hero}
         minDistance={maxR * 0.7}
         maxDistance={maxR * 3.2}
-        autoRotate={animate}
-        autoRotateSpeed={hero ? 0.45 : 0.8}
       />
       <EffectComposer>
         <Bloom mipmapBlur intensity={1.15} luminanceThreshold={0.85} levels={7} />
