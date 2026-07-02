@@ -11,9 +11,20 @@ import {
   type Element,
 } from '../data/elements'
 import { useStore, isDimmed } from '../store/useStore'
+import { colFor, rowFor } from './tableLayout'
 
 interface Props {
   element: Element
+}
+
+interface CellVisual {
+  background: string
+  border: string
+  glow: string
+  symbolGlow: string
+  accent: string
+  subline: string | null
+  sublineColor?: string
 }
 
 function ElementCell({ element: e }: Props) {
@@ -54,52 +65,61 @@ function ElementCell({ element: e }: Props) {
   const dimmed =
     mode !== 'quiz' && isDimmed(e.name, e.symbol, e.number, e.category, query, categoryFilter)
 
-  // ----- per-mode visuals -----
-  let bg = rgba(cat.color, 0.14)
-  let border = rgba(cat.color, 0.35)
-  let glow = rgba(cat.color, 0.45)
-  let subline: string | null = null
-  let sublineColor: string | undefined
+  /* ---------- per-mode visuals: glassy gem tiles ---------- */
+
+  const gem = (color: string, strength = 1): Pick<CellVisual, 'background' | 'border' | 'glow' | 'symbolGlow'> => ({
+    background: `linear-gradient(160deg, ${rgba(color, 0.34 * strength)} 0%, ${rgba(color, 0.12 * strength)} 52%, ${rgba(color, 0.05 * strength)} 100%)`,
+    border: rgba(color, 0.5 * strength),
+    glow: rgba(color, 0.55),
+    symbolGlow: rgba(color, 0.6),
+  })
+
+  let v: CellVisual
 
   if (mode === 'trends') {
-    const v = TRENDS[trend].get(e)
-    if (v == null) {
-      bg = 'rgba(30, 41, 59, 0.4)'
-      border = 'rgba(71, 85, 105, 0.35)'
-      glow = 'rgba(71, 85, 105, 0.4)'
-      subline = '—'
+    const val = TRENDS[trend].get(e)
+    if (val == null) {
+      v = {
+        ...gem('#64748b', 0.5),
+        accent: 'rgba(148,163,184,0.6)',
+        subline: '—',
+      }
     } else {
       const { min, max } = trendRange(trend)
-      const t = (v - min) / (max - min || 1)
-      bg = heatColor(t, 0.8)
-      border = heatColor(t, 1)
-      glow = heatColor(t, 0.65)
-      subline = TRENDS[trend].format(v)
+      const t = (val - min) / (max - min || 1)
+      v = {
+        background: `linear-gradient(160deg, ${heatColor(t, 0.95)} 0%, ${heatColor(t, 0.5)} 100%)`,
+        border: heatColor(Math.min(1, t + 0.12), 1),
+        glow: heatColor(t, 0.7),
+        symbolGlow: 'rgba(255,255,255,0.35)',
+        accent: 'rgba(255,255,255,0.75)',
+        subline: TRENDS[trend].format(val),
+      }
     }
   } else if (mode === 'temperature') {
     const phase = phaseAt(e, temperature)
     const pc = PHASE_COLORS[phase]
-    bg = rgba(pc.color, phase === 'unknown' ? 0.12 : 0.32)
-    border = rgba(pc.color, phase === 'unknown' ? 0.25 : 0.65)
-    glow = rgba(pc.color, 0.5)
-    subline = phase === 'unknown' ? '?' : pc.label
-    sublineColor = pc.color
+    const strength = phase === 'unknown' ? 0.45 : 1.15
+    v = {
+      ...gem(pc.color, strength),
+      accent: rgba(pc.color, 0.9),
+      subline: phase === 'unknown' ? '?' : pc.label,
+      sublineColor: phase === 'unknown' ? undefined : pc.color,
+    }
   } else if (mode === 'quiz') {
     const isWrong = quiz.wrong.includes(e.number)
     const isTarget = e.number === quiz.target && (quiz.solved || quiz.revealed)
-    if (isTarget) {
-      const c = quiz.solved ? '#4ade80' : '#fbbf24'
-      bg = rgba(c, 0.35)
-      border = rgba(c, 0.9)
-      glow = rgba(c, 0.7)
-    } else if (isWrong) {
-      bg = 'rgba(239, 68, 68, 0.3)'
-      border = 'rgba(239, 68, 68, 0.7)'
-      glow = 'rgba(239, 68, 68, 0.5)'
-    } else {
-      bg = 'rgba(30, 41, 59, 0.55)'
-      border = 'rgba(100, 116, 139, 0.3)'
-      glow = 'rgba(148, 163, 184, 0.35)'
+    const color = isTarget ? (quiz.solved ? '#4ade80' : '#fbbf24') : isWrong ? '#ef4444' : '#475569'
+    v = {
+      ...gem(color, isTarget || isWrong ? 1.4 : 0.55),
+      accent: rgba(color, 0.9),
+      subline: isTarget ? e.name : null,
+    }
+  } else {
+    v = {
+      ...gem(cat.color),
+      accent: rgba(cat.color, 0.95),
+      subline: e.name,
     }
   }
 
@@ -115,12 +135,13 @@ function ElementCell({ element: e }: Props) {
     else select(e.number)
   }
 
-  const style: CSSProperties & { '--glow': string } = {
-    gridColumn: e.x,
-    gridRow: e.y > 7 ? e.y + 1 : e.y, // row 8 is the f-block spacer
-    background: bg,
-    borderColor: border,
-    '--glow': glow,
+  const style: CSSProperties & Record<'--glow', string> = {
+    gridColumn: colFor(e.x),
+    gridRow: rowFor(e.y),
+    background: v.background,
+    borderColor: v.border,
+    boxShadow: `inset 0 1px 0 rgba(255,255,255,0.10), inset 0 0 16px ${rgba('#000000', 0.18)}`,
+    '--glow': v.glow,
   }
 
   return (
@@ -131,7 +152,7 @@ function ElementCell({ element: e }: Props) {
       aria-label={`${e.name}, atomic number ${e.number}`}
       initial={reduced ? false : { opacity: 0, scale: 0.7 }}
       animate={{
-        opacity: dimmed ? 0.15 : 1,
+        opacity: dimmed ? 0.13 : 1,
         scale: 1,
         x: justWrong && !reduced ? [0, -7, 7, -5, 5, 0] : 0,
       }}
@@ -140,33 +161,41 @@ function ElementCell({ element: e }: Props) {
         scale: { type: 'spring', stiffness: 320, damping: 26, delay: reduced ? 0 : (e.x + e.y) * 0.014 },
         x: { duration: 0.4 },
       }}
-      whileHover={reduced || dimmed ? undefined : { scale: 1.09, y: -3, zIndex: 5 }}
+      whileHover={reduced || dimmed ? undefined : { scale: 1.14, y: -4, zIndex: 5 }}
       whileTap={{ scale: 0.94 }}
       onMouseMove={onTilt}
       onMouseLeave={onTiltEnd}
       style={{ ...style, rotateX: srx, rotateY: sry, transformPerspective: 600 }}
-      className={`relative flex aspect-[13/15] min-w-0 cursor-pointer flex-col items-stretch justify-between rounded-md border p-1 text-left outline-none transition-shadow hover:shadow-[0_10px_30px_-6px_var(--glow)] focus-visible:ring-2 focus-visible:ring-cyan-300 ${
+      className={`group relative aspect-[13/15] min-w-0 cursor-pointer rounded-lg border outline-none transition-[filter,box-shadow] duration-200 hover:brightness-[1.35] hover:shadow-[0_12px_34px_-6px_var(--glow),inset_0_1px_0_rgba(255,255,255,0.16)] focus-visible:ring-2 focus-visible:ring-cyan-300 ${
         isSelected ? 'ring-2 ring-white/80' : ''
       } ${compareIdx >= 0 ? 'ring-2 ring-cyan-300' : ''}`}
     >
-      <span className="font-mono text-[9px] leading-none text-white/60">{e.number}</span>
-      <span className="font-display text-sm font-bold leading-none text-white sm:text-[15px]">
+      {/* atomic number — top left, tinted by category */}
+      <span
+        className="absolute left-1 top-1 font-mono text-[8px] leading-none sm:text-[9px]"
+        style={{ color: v.accent }}
+      >
+        {e.number}
+      </span>
+
+      {/* the symbol is the star: centered, glowing */}
+      <span
+        className="absolute inset-0 flex items-center justify-center pb-2 font-display text-[15px] font-bold text-white sm:text-lg"
+        style={{ textShadow: `0 0 14px ${v.symbolGlow}, 0 1px 2px rgba(0,0,0,0.6)` }}
+      >
         {e.symbol}
       </span>
-      {mode === 'quiz' ? (
-        <span className="h-[10px] text-[8px] leading-[10px] text-white/40">
-          {(quiz.solved || quiz.revealed) && e.number === quiz.target ? e.name : '·'}
-        </span>
-      ) : subline != null ? (
-        <span
-          className="truncate font-mono text-[8px] leading-[10px] text-white/80"
-          style={sublineColor ? { color: sublineColor } : undefined}
-        >
-          {subline}
-        </span>
-      ) : (
-        <span className="truncate text-[8px] leading-[10px] text-white/60">{e.name}</span>
-      )}
+
+      {/* footer line: name / value / phase */}
+      <span
+        className={`absolute inset-x-0.5 bottom-1 truncate text-center leading-[10px] ${
+          mode === 'trends' ? 'font-mono text-[8px]' : 'text-[7.5px] sm:text-[8px]'
+        } ${mode === 'quiz' ? 'text-white/85' : 'text-white/65'}`}
+        style={v.sublineColor ? { color: v.sublineColor } : undefined}
+      >
+        {mode === 'quiz' && !v.subline ? '·' : v.subline}
+      </span>
+
       {compareIdx >= 0 && (
         <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-cyan-300 font-mono text-[9px] font-bold text-slate-900">
           {compareIdx + 1}
