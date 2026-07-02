@@ -1,5 +1,5 @@
-import { useMemo, useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { useEffect, useMemo, useRef } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Stars, Trail, Html } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import { useReducedMotion } from 'framer-motion'
@@ -288,6 +288,31 @@ function Atom2D({ element }: { element: Element }) {
   )
 }
 
+/* ----------------------------- responsive framing ----------------------------- */
+
+/**
+ * Backs the camera off so a sphere of radius maxR always fits inside the
+ * canvas, whatever the aspect ratio — keeps every orbit fully visible and
+ * centered on any screen size. Re-runs on resize; preserves the current
+ * viewing direction so it cooperates with OrbitControls.
+ */
+function FitCameraToAtom({ maxR, margin }: { maxR: number; margin: number }) {
+  const camera = useThree((s) => s.camera)
+  const size = useThree((s) => s.size)
+
+  useEffect(() => {
+    const cam = camera as THREE.PerspectiveCamera
+    const aspect = size.width / size.height
+    const halfFov = (cam.fov * Math.PI) / 360
+    const dist = maxR / (Math.tan(halfFov) * Math.min(1, aspect) * margin)
+    cam.position.setLength(Math.max(dist, maxR * 1.2))
+    cam.lookAt(0, 0, 0)
+    cam.updateProjectionMatrix()
+  }, [camera, size, maxR, margin])
+
+  return null
+}
+
 /* ----------------------------------- canvas ----------------------------------- */
 
 interface Props {
@@ -352,12 +377,13 @@ export default function Atom3D({ element, view = 'bohr', showLabels = false, her
   return (
     <Canvas
       dpr={[1, 1.6]}
-      camera={{ position: [0, dist * 0.32, dist], fov: 42 }}
+      camera={{ position: [0, dist * (hero ? 0.24 : 0.32), dist], fov: 42 }}
       gl={{ antialias: true }}
       aria-label={`3D model of ${element.name}`}
     >
       <color attach="background" args={['#05070d']} />
-      <fog attach="fog" args={['#05070d', dist * 1.4, dist * 3.4]} />
+      <fog attach="fog" args={hero ? ['#05070d', dist * 4, dist * 8] : ['#05070d', dist * 1.4, dist * 3.4]} />
+      {hero && <FitCameraToAtom maxR={maxR} margin={0.88} />}
       <ambientLight intensity={0.45} />
       <pointLight position={[10, 12, 8]} intensity={220} color="#e0f2fe" />
       <Stars radius={28} depth={18} count={900} factor={2.4} saturation={0} fade speed={animate ? 0.7 : 0} />
@@ -366,7 +392,7 @@ export default function Atom3D({ element, view = 'bohr', showLabels = false, her
         enablePan={false}
         enableZoom={!hero}
         minDistance={maxR * 0.7}
-        maxDistance={maxR * 3.2}
+        maxDistance={hero ? maxR * 9 : maxR * 3.2}
       />
       <EffectComposer>
         <Bloom mipmapBlur intensity={1.15} luminanceThreshold={0.85} levels={7} />
