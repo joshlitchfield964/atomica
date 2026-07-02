@@ -224,6 +224,15 @@ export function heatColor(t: number, alpha = 1): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
+/** last occupied subshell, e.g. "[Ne] 3s2 3p4" → { n: 3, l: 1, label: "3p" } */
+export function lastSubshell(config: string): { n: number; l: number; label: string } {
+  const matches = [...config.matchAll(/(\d+)([spdf])(\d+)/g)]
+  const last = matches[matches.length - 1]
+  if (!last) return { n: 1, l: 0, label: '1s' }
+  const l = 'spdf'.indexOf(last[2])
+  return { n: Number(last[1]), l, label: `${last[1]}${last[2]}` }
+}
+
 // ---------- formatting helpers ----------
 
 export function fmt(v: number | null | undefined, digits = 3): string {

@@ -81,6 +81,18 @@ input[type='range'].temp-slider::-moz-range-thumb {
   cursor: pointer;
 }
 
+/* twinkling background stars */
+.star {
+  position: absolute;
+  border-radius: 9999px;
+  background: #e2e8f0;
+  animation: twinkle var(--d, 3s) ease-in-out var(--delay, 0s) infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.85; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

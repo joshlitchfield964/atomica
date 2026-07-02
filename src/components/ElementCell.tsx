@@ -1,5 +1,5 @@
-import { memo } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { memo, useCallback } from 'react'
+import { motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion'
 import type { CSSProperties } from 'react'
 import { CATEGORIES, rgba } from '../data/categories'
 import {
@@ -30,6 +30,25 @@ function ElementCell({ element: e }: Props) {
   const select = useStore((s) => s.select)
   const toggleCompare = useStore((s) => s.toggleCompare)
   const quizGuess = useStore((s) => s.quizGuess)
+
+  // 3D tilt toward the cursor — motion values only, no re-renders
+  const rx = useMotionValue(0)
+  const ry = useMotionValue(0)
+  const srx = useSpring(rx, { stiffness: 260, damping: 20 })
+  const sry = useSpring(ry, { stiffness: 260, damping: 20 })
+  const onTilt = useCallback(
+    (ev: React.MouseEvent<HTMLButtonElement>) => {
+      if (reduced) return
+      const r = ev.currentTarget.getBoundingClientRect()
+      ry.set(((ev.clientX - r.left) / r.width - 0.5) * 22)
+      rx.set(-((ev.clientY - r.top) / r.height - 0.5) * 22)
+    },
+    [reduced, rx, ry],
+  )
+  const onTiltEnd = useCallback(() => {
+    rx.set(0)
+    ry.set(0)
+  }, [rx, ry])
 
   const cat = CATEGORIES[e.category]
   const dimmed =
@@ -86,6 +105,9 @@ function ElementCell({ element: e }: Props) {
 
   const compareIdx = compare.indexOf(e.number)
   const isSelected = selected === e.number
+  // shake the most recent wrong quiz guess
+  const justWrong =
+    mode === 'quiz' && !quiz.solved && quiz.wrong[quiz.wrong.length - 1] === e.number
 
   const onClick = () => {
     if (mode === 'quiz') quizGuess(e.number)
@@ -108,14 +130,21 @@ function ElementCell({ element: e }: Props) {
       onClick={onClick}
       aria-label={`${e.name}, atomic number ${e.number}`}
       initial={reduced ? false : { opacity: 0, scale: 0.7 }}
-      animate={{ opacity: dimmed ? 0.15 : 1, scale: 1 }}
+      animate={{
+        opacity: dimmed ? 0.15 : 1,
+        scale: 1,
+        x: justWrong && !reduced ? [0, -7, 7, -5, 5, 0] : 0,
+      }}
       transition={{
         opacity: { duration: 0.18 },
         scale: { type: 'spring', stiffness: 320, damping: 26, delay: reduced ? 0 : (e.x + e.y) * 0.014 },
+        x: { duration: 0.4 },
       }}
       whileHover={reduced || dimmed ? undefined : { scale: 1.09, y: -3, zIndex: 5 }}
       whileTap={{ scale: 0.94 }}
-      style={style}
+      onMouseMove={onTilt}
+      onMouseLeave={onTiltEnd}
+      style={{ ...style, rotateX: srx, rotateY: sry, transformPerspective: 600 }}
       className={`relative flex aspect-[13/15] min-w-0 cursor-pointer flex-col items-stretch justify-between rounded-md border p-1 text-left outline-none transition-shadow hover:shadow-[0_10px_30px_-6px_var(--glow)] focus-visible:ring-2 focus-visible:ring-cyan-300 ${
         isSelected ? 'ring-2 ring-white/80' : ''
       } ${compareIdx >= 0 ? 'ring-2 ring-cyan-300' : ''}`}
