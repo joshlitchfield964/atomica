@@ -4,7 +4,6 @@ import { OrbitControls, Stars } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import { useReducedMotion } from 'framer-motion'
 import * as THREE from 'three'
-import { CATEGORIES } from '../data/categories'
 import type { Element } from '../data/elements'
 import { Nucleus, Shell, FitCameraToAtom } from './Atom3D'
 
@@ -65,7 +64,6 @@ export default function HeroAtom({ element }: { element: Element }) {
   const maxR = 1.5 + shells.length * 0.85
   const dist = maxR * 1.9
   const neutrons = Math.max(0, Math.round(element.mass) - element.number)
-  const color = CATEGORIES[element.category].color
 
   const sync = useMemo<CamSync>(
     () => ({ pos: new THREE.Vector3(0, dist * 0.24, dist), quat: new THREE.Quaternion() }),
@@ -92,15 +90,16 @@ export default function HeroAtom({ element }: { element: Element }) {
       <div className="absolute inset-0" aria-hidden>
         <Canvas dpr={[1, 1.6]} camera={camera} gl={{ antialias: true }}>
           <color attach="background" args={['#05070d']} />
-          <ambientLight intensity={0.45} />
-          <pointLight position={[10, 12, 8]} intensity={220} color="#e0f2fe" />
+          <ambientLight intensity={0.35} />
+          <hemisphereLight args={['#ffffff', '#8899aa', 0.9]} />
+          <directionalLight position={[10, 12, 8]} intensity={2.2} />
           <Stars radius={40} depth={20} count={900} factor={2.6} saturation={0} fade speed={animate ? 0.7 : 0} />
-          <Nucleus protons={element.number} neutrons={neutrons} color={color} animate={animate} />
+          <Nucleus protons={element.number} neutrons={neutrons} animate={animate} />
           {rings}
           <FitCameraToAtom maxR={maxR} margin={0.88} />
           <OrbitControls enablePan={false} enableZoom={false} minDistance={maxR * 0.7} maxDistance={maxR * 9} />
           <CameraBroadcast sync={sync} />
-          <EffectComposer>
+          <EffectComposer multisampling={4}>
             <Bloom mipmapBlur intensity={1.15} luminanceThreshold={0.85} levels={7} />
             <Vignette offset={0.18} darkness={0.85} />
           </EffectComposer>
@@ -115,8 +114,8 @@ export default function HeroAtom({ element }: { element: Element }) {
           gl={{ antialias: true, alpha: true }}
           style={{ pointerEvents: 'none' }}
         >
-          <ambientLight intensity={0.45} />
-          <pointLight position={[10, 12, 8]} intensity={220} color="#e0f2fe" />
+          {/* electrons/rings are emissive or unlit — this layer needs no lights */}
+          <ambientLight intensity={0.35} />
           {rings}
           <CameraFollow sync={sync} />
           <FrontHalfClip />

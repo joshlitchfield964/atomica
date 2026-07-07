@@ -53,19 +53,21 @@ function Background() {
 
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+      {/* soft-edged radial gradients instead of blur() filters — a 64px blur on
+          three 30rem+ animated layers re-rasterizes every frame and tanks fps */}
       <motion.div
-        className="absolute -top-40 left-[8%] h-[36rem] w-[36rem] rounded-full opacity-25 blur-3xl"
-        style={{ background: 'radial-gradient(circle, #0e7490 0%, transparent 65%)' }}
+        className="absolute -top-40 left-[8%] h-[36rem] w-[36rem] rounded-full opacity-25 will-change-transform"
+        style={{ background: 'radial-gradient(circle, #0e7490 0%, rgba(14,116,144,0.35) 35%, transparent 72%)' }}
         {...drift([0, 90, -40], [0, 50, 20], 34)}
       />
       <motion.div
-        className="absolute top-[18%] right-[-8%] h-[32rem] w-[32rem] rounded-full opacity-20 blur-3xl"
-        style={{ background: 'radial-gradient(circle, #6d28d9 0%, transparent 65%)' }}
+        className="absolute top-[18%] right-[-8%] h-[32rem] w-[32rem] rounded-full opacity-20 will-change-transform"
+        style={{ background: 'radial-gradient(circle, #6d28d9 0%, rgba(109,40,217,0.35) 35%, transparent 72%)' }}
         {...drift([0, -110, 30], [0, 70, -30], 41)}
       />
       <motion.div
-        className="absolute bottom-[-14%] left-[32%] h-[30rem] w-[30rem] rounded-full opacity-[0.17] blur-3xl"
-        style={{ background: 'radial-gradient(circle, #be185d 0%, transparent 65%)' }}
+        className="absolute bottom-[-14%] left-[32%] h-[30rem] w-[30rem] rounded-full opacity-[0.17] will-change-transform"
+        style={{ background: 'radial-gradient(circle, #be185d 0%, rgba(190,24,93,0.35) 35%, transparent 72%)' }}
         {...drift([0, 70, -80], [0, -50, 10], 38)}
       />
       <Starfield />
@@ -91,11 +93,16 @@ const barTransition = {
 
 export default function App() {
   const mode = useStore((s) => s.mode)
+  const selected = useStore((s) => s.selected)
   const [entered, setEntered] = useState(false)
+
+  // the hero and the detail panel are opaque full-screen layers — while either
+  // covers the page, unmount the animated background so it stops burning frames
+  const backgroundVisible = entered && selected == null
 
   return (
     <div className="min-h-dvh">
-      <Background />
+      {backgroundVisible && <Background />}
 
       <AnimatePresence>{!entered && <Hero onEnter={() => setEntered(true)} />}</AnimatePresence>
 

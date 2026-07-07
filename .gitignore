@@ -3,3 +3,5 @@ dist
 screens
 *.local
 .DS_Store
+
+.vercel

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { OrbitControls, Stars, Trail, Html } from '@react-three/drei'
+import { OrbitControls, Stars, Trail, Html, Instances, Instance } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import { useReducedMotion } from 'framer-motion'
 import * as THREE from 'three'
@@ -38,64 +38,66 @@ function fibonacciSphere(count: number, radius: number): [number, number, number
   return pts
 }
 
+const PROTON_COLOR = '#ff554d'
+const NEUTRON_COLOR = '#aaaaaa'
+const NUCLEON_R = 0.19
+
+/** deterministic PRNG so each nuclide gets the same proton/neutron mix every render */
+function mulberry32(seed: number) {
+  return () => {
+    seed |= 0
+    seed = (seed + 0x6d2b79f5) | 0
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
 export function Nucleus({
   protons,
   neutrons,
-  color,
   animate,
 }: {
   protons: number
   neutrons: number
-  color: string
   animate: boolean
 }) {
   const group = useRef<THREE.Group>(null)
-  const glow = useRef<THREE.Mesh>(null)
-  const shown = Math.min(protons + neutrons, 44)
-  const points = useMemo(() => fibonacciSphere(shown, shown > 4 ? 0.36 : 0.18), [shown])
-  const protonShare = protons / (protons + neutrons || 1)
+  const total = protons + neutrons
+  const shown = Math.min(total, 44)
+  // cluster radius grows with √count so neighboring balls always overlap slightly —
+  // a tight raspberry-like packing instead of a hollow shell
+  const clusterR = shown <= 1 ? 0 : Math.max(NUCLEON_R, 0.42 * NUCLEON_R * Math.sqrt(shown))
+  const points = useMemo(() => fibonacciSphere(shown, clusterR), [shown, clusterR])
 
-  useFrame(({ clock }, dt) => {
-    if (!animate) return
-    const t = clock.elapsedTime
-    if (group.current) {
-      group.current.rotation.y += dt * 0.25
-      group.current.rotation.x += dt * 0.11
+  // shuffle proton/neutron placement so the two kinds interleave organically
+  const isProton = useMemo(() => {
+    const p = Math.round((protons / (total || 1)) * shown)
+    const arr = Array.from({ length: shown }, (_, i) => i < p)
+    const rand = mulberry32(protons * 31 + neutrons)
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1))
+      ;[arr[i], arr[j]] = [arr[j], arr[i]]
     }
-    if (glow.current) {
-      const s = 1 + Math.sin(t * 2.2) * 0.06
-      glow.current.scale.setScalar(s)
-      const m = glow.current.material as THREE.MeshBasicMaterial
-      m.opacity = 0.07 + Math.sin(t * 2.2) * 0.03
-    }
+    return arr
+  }, [protons, neutrons, total, shown])
+
+  useFrame((_, dt) => {
+    if (!animate || !group.current) return
+    group.current.rotation.y += dt * 0.25
+    group.current.rotation.x += dt * 0.11
   })
 
-  const auraColor = useMemo(() => new THREE.Color(color).lerp(new THREE.Color('#e0f2fe'), 0.45), [color])
-
   return (
-    <group>
-      <pointLight color={color} intensity={10} distance={7} />
-      {/* soft breathing aura around the nucleus */}
-      <mesh ref={glow}>
-        <sphereGeometry args={[0.72, 24, 24]} />
-        <meshBasicMaterial color={auraColor} transparent opacity={0.07} blending={THREE.AdditiveBlending} depthWrite={false} />
-      </mesh>
-      <group ref={group}>
-        {points.map((p, i) => {
-          const isProton = i / shown < protonShare
-          return (
-            <mesh key={i} position={p}>
-              <sphereGeometry args={[0.165, 14, 14]} />
-              <meshStandardMaterial
-                color={isProton ? '#ff8fa3' : '#aab7cc'}
-                emissive={isProton ? '#f43f5e' : '#475569'}
-                emissiveIntensity={isProton ? 1.6 : 0.7}
-                roughness={0.35}
-              />
-            </mesh>
-          )
-        })}
-      </group>
+    <group ref={group}>
+      {/* all nucleons share one geometry + material → a single draw call */}
+      <Instances limit={44}>
+        <sphereGeometry args={[NUCLEON_R, 28, 28]} />
+        <meshStandardMaterial roughness={0.4} metalness={0.2} />
+        {points.map((p, i) => (
+          <Instance key={i} position={p} color={isProton[i] ? PROTON_COLOR : NEUTRON_COLOR} />
+        ))}
+      </Instances>
     </group>
   )
 }
@@ -322,6 +324,8 @@ interface Props {
   showLabels?: boolean
 }
 
+const FULL_SCALE = new THREE.Vector3(1, 1, 1)
+
 function AtomContents({ element, view, showLabels, animate }: { element: Element; view: AtomView; showLabels: boolean; animate: boolean }) {
   const group = useRef<THREE.Group>(null)
 
@@ -332,19 +336,18 @@ function AtomContents({ element, view, showLabels, animate }: { element: Element
     if (!g || !animate) return
     if (g.scale.x < 0.999) {
       const k = 1 - Math.pow(0.02, dt)
-      g.scale.lerp(new THREE.Vector3(1, 1, 1), k)
+      g.scale.lerp(FULL_SCALE, k)
     }
   })
 
   const shells = element.shells
   const neutrons = Math.max(0, Math.round(element.mass) - element.number)
-  const color = CATEGORIES[element.category].color
 
   return (
     <group ref={group} scale={animate ? 0.42 : 1}>
       {view === 'bohr' ? (
         <>
-          <Nucleus protons={element.number} neutrons={neutrons} color={color} animate={animate} />
+          <Nucleus protons={element.number} neutrons={neutrons} animate={animate} />
           {shells.map((count, i) => (
             <Shell
               key={`${element.number}-${i}`}
@@ -382,8 +385,9 @@ export default function Atom3D({ element, view = 'bohr', showLabels = false }: P
     >
       <color attach="background" args={['#05070d']} />
       <fog attach="fog" args={['#05070d', dist * 1.4, dist * 3.4]} />
-      <ambientLight intensity={0.45} />
-      <pointLight position={[10, 12, 8]} intensity={220} color="#e0f2fe" />
+      <ambientLight intensity={0.35} />
+      <hemisphereLight args={['#ffffff', '#8899aa', 0.9]} />
+      <directionalLight position={[10, 12, 8]} intensity={2.2} />
       <Stars radius={28} depth={18} count={900} factor={2.4} saturation={0} fade speed={animate ? 0.7 : 0} />
       <AtomContents element={element} view={view} showLabels={showLabels} animate={animate} />
       <OrbitControls
@@ -391,7 +395,7 @@ export default function Atom3D({ element, view = 'bohr', showLabels = false }: P
         minDistance={maxR * 0.7}
         maxDistance={maxR * 3.2}
       />
-      <EffectComposer>
+      <EffectComposer multisampling={4}>
         <Bloom mipmapBlur intensity={1.15} luminanceThreshold={0.85} levels={7} />
         <Vignette offset={0.18} darkness={0.85} />
       </EffectComposer>
