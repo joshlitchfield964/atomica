@@ -142,7 +142,7 @@ export default function App() {
                   className="underline decoration-slate-600 underline-offset-2 hover:text-ink"
                   href="https://github.com/Bowserinator/Periodic-Table-JSON"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                 >
                   Periodic-Table-JSON
                 </a>{' '}
