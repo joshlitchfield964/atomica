@@ -187,7 +187,7 @@ export function poseAsh(t, sunnyJ) {
 // ---------------------------------------------------------------------------
 const S_STEP = 132;
 const S_X0 = 1130;
-export const S_STOP_X = 738;
+export const S_STOP_X = 664;
 export const S_SEAT = [650, SEAT_Y - 28];
 
 function sunnyX(t) {
@@ -234,12 +234,11 @@ export function poseSunny(t) {
   // anticipation: dip before sitting
   pelStand[1] += 6 * smooth(seg(t, 12.0, 12.3)) * (1 - sit);
   let P = lerp2(pelStand, S_SEAT, sit);
-  P[1] -= Math.sin(sit * Math.PI) * 10;                          // arc
   const land = wobble(t, 13.3, 3.2, 6);
   const squash = 1 - 0.045 * land - 0.03 * seg(t, 12.4, 13.0) * (1 - seg(t, 13.2, 13.4));
 
   const lean = walkAmt * (0.1 + 0.03 * Math.sin(TAU * 2 * phase))
-    + track([[11.3, 0.02], [12.0, 0.04], [12.35, 0.3], [13.3, 0.12], [13.8, 0.06], [17.5, 0.12], [21, 0.1], [25.6, 0.08], [27.2, 0.2]], t) * (1 - walkAmt);
+    + track([[11.3, 0.02], [12.0, 0.03], [12.35, 0.12], [12.9, 0.2], [13.3, 0.1], [13.8, 0.06], [17.5, 0.12], [21, 0.1], [25.6, 0.08], [27.2, 0.2]], t) * (1 - walkAmt);
   const neck = track([[9.5, 0.08], [11.3, 0.08], [11.65, -0.5], [12.05, -0.48], [12.4, 0.32], [13.6, 0.28], [14.4, 0.12], [14.85, -0.2], [15.5, 0.24], [17.6, 0.38],
     [21.3, 0.2], [22.6, -0.2], [25.3, -0.05], [27.2, 0.36]], t);
 
