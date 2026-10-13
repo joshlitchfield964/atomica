@@ -10,6 +10,8 @@ A friend notices, sits down in the rain beside them, and only then opens a yello
 meet, warmth blooms outward, the tangled thought-scribble straightens into a line that draws the sun, the
 last raindrops become flowers, and a small, harmless cloud stays nearby.
 
+**Watch:** [`video/someone-stayed-1080x1920.mp4`](video/someone-stayed-1080x1920.mp4) · [contact sheet](video/contact-sheet.png)
+
 See **[STORYBOARD.md](STORYBOARD.md)** for the shot list, colour script, character designs, rig and
 physics plan.
 
