@@ -16,8 +16,9 @@ three boil variants for a living hand-drawn line.
 
 ## Files
 
-- `film.js` — timeline, characters, set and compositing (all drawing via p5.brush)
-- `index.html` — loads p5, p5.brush and the film (`?live` plays it in a browser)
+- `STORYBOARD.md` — storyboard, colour script, character + rig + physics plan
+- `src/` — ES modules: `util`, `ink` (p5.brush helpers), `rig` (skeleton + IK), `sim` (physics), `world`, `story` (shots + acting), `main`
+- `index.html` — loads p5, p5.brush and the film
 - `render.mjs` — headless Chromium renderer + ffmpeg encode
 
 ## Render

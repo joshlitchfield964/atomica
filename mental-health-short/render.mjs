@@ -1,7 +1,8 @@
-// Renders the film headlessly with Playwright + ffmpeg.
-//   node render.mjs                     full render → out/someone-stayed-1080x1920.mp4
-//   node render.mjs --stills 2,8.5,13   PNG stills at given seconds → out/stills/
-//   node render.mjs --workers 3         parallel browser workers (default 3)
+// Headless renderer: Playwright (Chromium, software WebGL) + ffmpeg.
+//   node render.mjs                         full film → out/someone-stayed-1080x1920.mp4
+//   node render.mjs --stills 2,8.5,13       PNG stills at given seconds → out/stills/
+//   node render.mjs --workers 3             parallel browser pages (default 3)
+//   node render.mjs --from 0 --to 120       render a frame range only (no encode)
 import { chromium } from 'playwright'
 import http from 'node:http'
 import fs from 'node:fs'
@@ -15,7 +16,8 @@ const outDir = path.join(root, 'out')
 const framesDir = path.join(outDir, 'frames')
 const stills = opt('stills', null)
 const workers = Number(opt('workers', 3))
-const port = 8700 + Math.floor(Math.random() * 200)
+const FPS = 24, NF = 720
+const from = Number(opt('from', 0)), to = Number(opt('to', NF))
 
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.png': 'image/png' }
 const server = http.createServer((req, res) => {
@@ -26,33 +28,30 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': types[path.extname(f)] || 'application/octet-stream' })
     res.end(data)
   })
-}).listen(port)
+})
+await new Promise((r) => server.listen(0, r))
+const port = server.address().port
 
-const chromePath = fs.existsSync('/opt/pw-browsers/chromium-1194/chrome-linux/chrome')
-  ? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' : undefined
+const chromePath = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome'
 const browser = await chromium.launch({
-  executablePath: chromePath,
+  executablePath: fs.existsSync(chromePath) ? chromePath : undefined,
   args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
 })
 
 async function openPage(query = '') {
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } })
   page.on('pageerror', (e) => console.error('page error:', e.message))
-  page.on('console', (m) => m.type() === 'warning' && console.warn('page:', m.text()))
+  page.on('console', (m) => { if (['error', 'warning'].includes(m.type()) || m.text().startsWith('physics')) console.log('page:', m.text()) })
   await page.goto(`http://localhost:${port}/index.html${query}`)
-  await page.waitForFunction(() => window.filmReady === true, null, { timeout: 120000 })
+  await page.waitForFunction(() => window.filmReady === true, null, { timeout: 300000 })
   return page
 }
-
-async function renderTo(page, d, file) {
-  const url = await page.evaluate((d) => window.renderDrawing(d), d)
-  fs.writeFileSync(file, Buffer.from(url.split(',')[1], 'base64'))
-}
+const save = (file, url) => fs.writeFileSync(file, Buffer.from(url.split(',')[1], 'base64'))
 
 fs.mkdirSync(outDir, { recursive: true })
 const t0 = Date.now()
 
-// 1) Background plates (3 palette states x 3 boil variants), painted once at 2x.
+// 1) background plates: 3 palette states x 3 boil variants, painted once at 2x
 const platesDir = path.join(outDir, 'plates')
 fs.mkdirSync(platesDir, { recursive: true })
 const plateJobs = []
@@ -64,8 +63,7 @@ if (plateJobs.length) {
   const page = await openPage('?plate=1')
   for (const [k, b, f] of plateJobs) {
     const t = Date.now()
-    const url = await page.evaluate(([k, b]) => window.renderPlate(k, b), [k, b])
-    fs.writeFileSync(f, Buffer.from(url.split(',')[1], 'base64'))
+    save(f, await page.evaluate(([k, b]) => window.renderPlate(k, b), [k, b]))
     console.log(`plate ${k}${b} in ${((Date.now() - t) / 1000).toFixed(1)}s`)
   }
   await page.close()
@@ -76,40 +74,44 @@ if (stills) {
   fs.mkdirSync(dir, { recursive: true })
   const page = await openPage()
   for (const s of stills.split(',').map(Number)) {
-    const d = Math.min(359, Math.round(s * 12))
+    const fi = Math.min(NF - 1, Math.round(s * FPS))
     const t = Date.now()
-    await renderTo(page, d, path.join(dir, `t${s.toFixed(2).padStart(5, '0')}.png`))
-    console.log(`still ${s}s (drawing ${d}) in ${((Date.now() - t) / 1000).toFixed(1)}s`)
+    save(path.join(dir, `t${s.toFixed(2).padStart(5, '0')}.png`), await page.evaluate((f) => window.renderFrame(f), fi))
+    console.log(`still ${s}s (frame ${fi}) in ${((Date.now() - t) / 1000).toFixed(1)}s`)
   }
 } else {
   fs.mkdirSync(framesDir, { recursive: true })
-  const { N_DRAWINGS } = { N_DRAWINGS: 360 }
   const todo = []
-  for (let d = 0; d < N_DRAWINGS; d++) {
-    const f = path.join(framesDir, `d${String(d).padStart(4, '0')}.png`)
-    if (!fs.existsSync(f)) todo.push([d, f])
+  for (let fi = from; fi < to; fi++) {
+    const f = path.join(framesDir, `f${String(fi).padStart(4, '0')}.png`)
+    if (!fs.existsSync(f)) todo.push([fi, f])
   }
-  console.log(`${todo.length} drawings to render with ${workers} workers`)
+  const total = todo.length
+  console.log(`${total} frames to render with ${workers} workers`)
   let done = 0
   await Promise.all(Array.from({ length: workers }, async () => {
     const page = await openPage()
     while (todo.length) {
-      const [d, f] = todo.shift()
-      await renderTo(page, d, f + '.tmp')
+      const [fi, f] = todo.shift()
+      save(f + '.tmp', await page.evaluate((x) => window.renderFrame(x), fi))
       fs.renameSync(f + '.tmp', f)
       done++
-      if (done % 10 === 0) {
+      if (done % 12 === 0 || done === total) {
         const el = (Date.now() - t0) / 1000
-        console.log(`${done} done, ${el.toFixed(0)}s elapsed, ~${(el / done * todo.length / 60).toFixed(1)} min left`)
+        console.log(`${done}/${total} frames, ${el.toFixed(0)}s elapsed, ~${(el / done * (total - done) / 60).toFixed(1)} min left`)
       }
     }
   }))
-  // 12 drawings/s held on twos → 24 fps, H.264 High profile, 1080x1920
-  const mp4 = path.join(outDir, 'someone-stayed-1080x1920.mp4')
-  execFileSync('ffmpeg', ['-y', '-framerate', '12', '-i', path.join(framesDir, 'd%04d.png'),
-    '-vf', 'fps=24,format=yuv420p', '-c:v', 'libx264', '-preset', 'slow', '-crf', '16',
-    '-profile:v', 'high', '-tune', 'animation', '-movflags', '+faststart', mp4], { stdio: 'inherit' })
-  console.log('wrote', mp4)
+  const have = fs.readdirSync(framesDir).filter((n) => /^f\d{4}\.png$/.test(n)).length
+  if (have === NF) {
+    const mp4 = path.join(outDir, 'someone-stayed-1080x1920.mp4')
+    execFileSync('ffmpeg', ['-y', '-v', 'error', '-framerate', String(FPS), '-i', path.join(framesDir, 'f%04d.png'),
+      '-c:v', 'libx264', '-preset', 'slow', '-crf', '15', '-profile:v', 'high', '-tune', 'animation',
+      '-pix_fmt', 'yuv420p', '-movflags', '+faststart', mp4], { stdio: 'inherit' })
+    console.log('wrote', mp4)
+  } else {
+    console.log(`${have}/${NF} frames present; skipping encode`)
+  }
 }
 
 console.log(`total ${((Date.now() - t0) / 1000).toFixed(0)}s`)
