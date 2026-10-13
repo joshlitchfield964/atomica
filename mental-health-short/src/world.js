@@ -54,11 +54,24 @@ export function drawSet(st) {
     brush.rect(-700, mix(y0, y1, a) - 1, 2500, (y1 - y0) / bands + 2);
   }
   off();
-  // soft far clouds
-  const cl = hexMix(low, '#ffffff', 0.45);
-  [[-40, 150, 240], [330, 40, 200], [880, 120, 260], [1130, 320, 170], [560, 250, 150], [180, 330, 120]].forEach(([x, y, w], i) => {
-    shape('skyc' + i, ellipsePts(x, y, w, 40 + w * 0.06, 14), { fill: cl, fillA: 120, bleed: 0.25, tex: 0.5, border: 0.25, stroke: false });
-    line('skycl' + i, [[x - w * 0.7, y + 14], [x - w * 0.2, y + 22], [x + w * 0.5, y + 16]], { brush: 'HB', c: hexMix(cl, C.inkSoft, 0.25), w: 0.5, curv: 0.6 });
+  // soft far clouds: lobed doodle puffs
+  const cl = hexMix(low, '#ffffff', 0.5);
+  [[-40, 150, 1.25], [330, 50, 1.0], [880, 120, 1.35], [1120, 320, 0.85], [560, 250, 0.8], [170, 340, 0.65]].forEach(([x, y, k], i) => {
+    const lobes = [[-110, 10, 52], [-55, -18, 66], [15, -30, 74], [85, -12, 60], [135, 12, 42]].map(([lx, ly, r]) => [x + lx * k, y + ly * k, r * k]);
+    const pts = [];
+    for (let a = 0; a < 40; a++) {
+      const d = dir(a / 40 * TAU);
+      let best = 0;
+      for (const [lx, ly, r] of lobes) {
+        const o = [lx - x, ly - y], b = o[0] * d[0] + o[1] * d[1];
+        const disc = b * b - (o[0] * o[0] + o[1] * o[1] - r * r);
+        if (disc >= 0) best = Math.max(best, b + Math.sqrt(disc));
+      }
+      const p = [x + d[0] * best, y + d[1] * best];
+      if (p[1] > y + 28 * k) p[1] = mix(p[1], y + 28 * k, 0.8);
+      pts.push(p);
+    }
+    shape('skyc' + i, pts, { fill: cl, fillA: 150, bleed: 0.2, tex: 0.45, border: 0.3, stroke: hexMix(cl, C.inkSoft, 0.35), w: 0.5, brush: 'HB', curv: 0.7, per: 2 });
   });
 
   // far hills with a tiny town
@@ -97,16 +110,55 @@ export function drawSet(st) {
   fg.push([1800, 2800], [-700, 2800]);
   shape('groundfg', fg, { fill: hexMix(g, C.ink, 0.24), fillA: 110, bleed: 0.15, tex: 0.6, border: 0.2, stroke: false, per: 3 });
   line('groundline', gp.slice(0, -2), { brush: '2B', w: 0.75, c: C.inkSoft, curv: 0.6 });
-  // footpath leading to the bench
-  const path = [[300, 2100], [400, 1880], [455, 1700], [490, 1565], [520, 1478], [640, 1474], [672, 1565], [720, 1720], [810, 1900], [930, 2100]];
-  shape('path', path, { wash: hexMix('#ccbea2', '#e6d2a4', st.warm), washA: 215, fill: '#b5a37f', fillA: 95, tex: 0.65, bleed: 0.05, stroke: false, per: 4 });
-  line('pathL', path.slice(0, 5), { brush: 'HB', c: C.inkSoft, w: 0.6, curv: 0.6 });
-  line('pathR', path.slice(5), { brush: 'HB', c: C.inkSoft, w: 0.6, curv: 0.6 });
-  for (let i = 0; i < 10; i++) {
-    const s = hash('st', i);
-    const y = 1530 + i * 52, x = i % 2 ? 470 - (y - 1500) * 0.42 + 10 * s : 680 + (y - 1500) * 0.45 + 10 * s;
-    shape('stone' + i, ellipsePts(x, y, 12 + 9 * s, 6 + 4 * s, 8), { wash: hexMix('#a6a399', '#c4b79c', st.warm), washA: 230, stroke: C.inkSoft, w: 0.5, brush: 'HB', curv: 0.8 });
+  // ground texture: darker grass patches and pencil scumble
+  for (let i = 0; i < 16; i++) {
+    const x = -60 + hash('gpx', i) * 1240, y = 1490 + Math.pow(hash('gpy', i), 0.9) * 560;
+    const w = 90 + 120 * hash('gpw', i);
+    shape('gpatch' + i, ellipsePts(x, y, w, w * 0.18, 12), { fill: hexMix(g, '#4d6a3c', 0.25 + 0.2 * st.warm), fillA: 90, bleed: 0.2, tex: 0.6, border: 0.3, stroke: false });
   }
+  const scum = [];
+  for (let i = 0; i < 70; i++) {
+    const x = -60 + hash('scx', i) * 1240, y = 1470 + hash('scy', i) * 620;
+    scum.push([[x, y], [x + 18, y - 2], [x + 6, y + 3], [x + 26, y + 1]]);
+  }
+  lines('gscumble', scum, { brush: 'HB', c: hexMix(g, C.ink, 0.35), w: 0.45, curv: 0.4 });
+  // a winding footpath leading up to the bench
+  const centre = [[640, 2150], [560, 1960], [630, 1780], [570, 1620], [598, 1478]];
+  const pathPoly = tubeOpen(centre, [230, 170, 130, 96, 70]);
+  shape('path', pathPoly, { wash: hexMix('#cfc1a4', '#e8d4a6', st.warm), washA: 220, fill: '#b5a37f', fillA: 100, tex: 0.7, bleed: 0.06, stroke: false, dense: false });
+  const half = Math.floor(pathPoly.length / 2);
+  line('pathL', pathPoly.slice(0, half), { brush: 'HB', c: C.inkSoft, w: 0.65, curv: 0.6 });
+  line('pathR', pathPoly.slice(half), { brush: 'HB', c: C.inkSoft, w: 0.65, curv: 0.6 });
+  const pebbles = [];
+  for (let i = 0; i < 26; i++) {
+    const k = hash('pb', i);
+    const side = i % 2 ? 0 : half;
+    const p = pathPoly[side + Math.floor(k * (half - 2))];
+    const r = 5 + 7 * hash('pbr', i);
+    pebbles.push(ellipsePts(p[0] + (hash('pbx', i) - 0.5) * 20, p[1] + (hash('pby', i) - 0.5) * 10, r * 1.5, r, 8));
+  }
+  washes('pebbles', pebbles, hexMix('#a39f95', '#c7b89a', st.warm), 235);
+  lines('pebbles-ol', pebbles.map((q) => q.concat([q[0]])), { brush: 'HB', c: C.inkSoft, w: 0.5, curv: 0.7 });
+  const tracks = [];
+  for (let i = 0; i < 18; i++) {
+    const u = hash('pt', i);
+    const c = polySlice(smoothOpen(centre, 6), 0, Math.max(0.02, u)).slice(-1)[0] || centre[0];
+    tracks.push([[c[0] - 14, c[1]], [c[0] + 12, c[1] + 2]]);
+  }
+  lines('pathmarks', tracks, { brush: 'HB', c: '#a08d6a', w: 0.5 });
+}
+
+function tubeOpen(ctrl, widths) {
+  const pts = smoothOpen(ctrl, 6);
+  const n = pts.length, Lft = [], Rgt = [];
+  for (let i = 0; i < n; i++) {
+    const a = pts[Math.max(0, i - 1)], b = pts[Math.min(n - 1, i + 1)];
+    const nm = perp(norm(sub(b, a)));
+    const u = i / (n - 1) * (widths.length - 1), k = Math.min(widths.length - 2, Math.floor(u));
+    const w = mix(widths[k], widths[k + 1], u - k) / 2;
+    Lft.push(add(pts[i], mul(nm, w))); Rgt.push(sub(pts[i], mul(nm, w)));
+  }
+  return Lft.concat(Rgt.reverse());
 }
 
 function drawTown(st) {
@@ -277,7 +329,8 @@ export const TUFTS = (() => {
   for (let i = 0; i < 150; i++) {
     const x = -120 + hash('gx', i) * 1360;
     const y = groundY(x) + 6 + Math.pow(hash('gy', i), 1.15) * 640;
-    const onPath = Math.abs(x - mix(580, 600, (y - 1470) / 600)) < 70 + (y - 1470) * 0.33 && y > 1470;
+    const pc = y < 1620 ? mix(598, 570, (y - 1478) / 142) : y < 1780 ? mix(570, 630, (y - 1620) / 160) : y < 1960 ? mix(630, 560, (y - 1780) / 180) : 560;
+    const onPath = y > 1470 && Math.abs(x - pc) < 40 + (y - 1470) * 0.11;
     const underBench = x > 330 && x < 800 && y < 1470;
     if (onPath || underBench) continue;
     out.push({ x, y, s: 0.65 + (y - GROUND_Y) / 520, n: 3 + Math.floor(hash('gn', i) * 3), tone: hash('gt', i) < 0.5 ? 0 : 1 });

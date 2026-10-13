@@ -3,6 +3,7 @@
 //   node render.mjs --stills 2,8.5,13       PNG stills at given seconds → out/stills/
 //   node render.mjs --workers 3             parallel browser pages (default 3)
 //   node render.mjs --from 0 --to 120       render a frame range only (no encode)
+//   node render.mjs --stills 3 --noplates   preview with the set painted live (skips plates)
 import { chromium } from 'playwright'
 import http from 'node:http'
 import fs from 'node:fs'
@@ -18,6 +19,7 @@ const stills = opt('stills', null)
 const workers = Number(opt('workers', 3))
 const FPS = 24, NF = 720
 const from = Number(opt('from', 0)), to = Number(opt('to', NF))
+const noPlates = args.includes('--noplates')
 
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.png': 'image/png' }
 const server = http.createServer((req, res) => {
@@ -59,7 +61,7 @@ for (const k of ['A', 'B', 'C']) for (const b of [0, 1, 2]) {
   const f = path.join(platesDir, `${k}${b}.png`)
   if (!fs.existsSync(f)) plateJobs.push([k, b, f])
 }
-if (plateJobs.length) {
+if (plateJobs.length && !noPlates) {
   const page = await openPage('?plate=1')
   for (const [k, b, f] of plateJobs) {
     const t = Date.now()
@@ -72,7 +74,7 @@ if (plateJobs.length) {
 if (stills) {
   const dir = path.join(outDir, 'stills')
   fs.mkdirSync(dir, { recursive: true })
-  const page = await openPage()
+  const page = await openPage(noPlates ? '?noplates=1' : '')
   for (const s of stills.split(',').map(Number)) {
     const fi = Math.min(NF - 1, Math.round(s * FPS))
     const t = Date.now()
