@@ -166,7 +166,7 @@ function drawArm(j, side, kind, dark) {
   const top = dark ? col.topDark : col.top;
   const isCoat = def.id === 'S' || def.id === 'X';
   shape(id, limbTube(j, L, isCoat ? [27, 24, 21] : [30, 27, 27]),
-    { wash: top, washA: 252, fill: dark ? null : col.topDark, fillA: 55, tex: 0.6, bleed: 0.02, w: 0.95, curv: 0.55 });
+    { wash: top, washA: 252, w: 0.95, curv: 0.55 });
   // cuff
   const d = norm(sub(L.end, L.mid));
   const c = sub(L.end, mul(d, W(j, 5)));
@@ -199,8 +199,8 @@ function drawTorso(j) {
   if (def.id === 'A') {
     // oversized hoodie
     const body = tube([add(P, mul(u, W(j, -8))), M, add(S, mul(u, W(j, -4)))], [W(j, def.hipW), W(j, chest + 4), W(j, chest * 0.92)], 5);
-    shape(id, body, { wash: col.top, washA: 252, fill: col.topDark, fillA: 70, tex: 0.65, bleed: 0.02, w: 1.0,
-      hatch: { d: 8, a: f > 0 ? 2.3 : 0.85, brush: 'HB', c: col.topDark, w: 0.42 } });
+    shape(id, body, { wash: col.top, washA: 252, w: 1.0,
+      hatch: { d: 9, a: f > 0 ? 2.3 : 0.85, brush: 'HB', c: col.topDark, w: 0.42 } });
     // hood bunched behind the neck
     const hc = add(add(S, mul(fwd, W(j, -20))), mul(u, W(j, -2)));
     shape(id + '-hood', ellipsePts(hc[0], hc[1], W(j, 30), W(j, 20), 12, 0, angleOf(fwd) + 0.5 * f),
@@ -215,8 +215,8 @@ function drawTorso(j) {
     // coat: longer, flares at the hem
     const hemDrop = pose.coatHem ?? 34;
     const body = tube([add(P, mul(u, W(j, -hemDrop))), M, add(S, mul(u, W(j, -4)))], [W(j, def.hipW + 10), W(j, chest), W(j, chest * 0.9)], 5);
-    shape(id, body, { wash: col.top, washA: 252, fill: col.topDark, fillA: 70, tex: 0.65, bleed: 0.02, w: 1.0,
-      hatch: { d: 9, a: f > 0 ? 2.3 : 0.85, brush: 'HB', c: col.topDark, w: 0.42 } });
+    shape(id, body, { wash: col.top, washA: 252, w: 1.0,
+      hatch: { d: 10, a: f > 0 ? 2.3 : 0.85, brush: 'HB', c: col.topDark, w: 0.42 } });
     // front opening + buttons
     const fr = (k) => add(lerp2(add(P, mul(u, W(j, -hemDrop + 6))), S, k), mul(fwd, W(j, mix(30, 26, k))));
     line(id + '-seam', [fr(0), fr(0.5), fr(0.92)], { brush: 'HB', c: col.topDark, w: 0.7, curv: 0.5 });
@@ -299,10 +299,14 @@ function drawHead(j) {
   drawEye('N', eyeN, 1);
   // brows: worried (inner ends up) ↔ soft
   const worry = face.worry ?? 0;
-  const brow = (k, e, s) => line(id + '-brow' + k, [R([e[0] - 0.15 * s, e[1] - 0.25 + worry * 0.03]), R([e[0] + 0.02 * s, e[1] - 0.29 - worry * 0.05]), R([e[0] + 0.15 * s, e[1] - 0.27 - worry * 0.13])],
-    { brush: '2B', w: 0.95, curv: 0.6 });
-  if (turn > 0.25) brow('F', [eyeF[0] + 0.02, eyeF[1]], -1);
-  brow('N', eyeN, 1);
+  // brows: worry lifts the inner ends (towards the other eye) → sad/anxious, never angry
+  const brow = (k, e, innerSign) => {
+    const lift = (side) => (side === innerSign ? worry * 0.13 : -worry * 0.02);
+    line(id + '-brow' + k, [R([e[0] - 0.15, e[1] - 0.25 - lift(-1)]), R([e[0], e[1] - 0.3 - worry * 0.03]), R([e[0] + 0.15, e[1] - 0.25 - lift(1)])],
+      { brush: '2B', w: 0.95, curv: 0.6 });
+  };
+  if (turn > 0.25) brow('F', [eyeF[0] + 0.02, eyeF[1]], 1);
+  brow('N', eyeN, turn > 0.25 ? -1 : 1);
   // nose
   if (turn > 0.6) line(id + '-nose', [R([fx + 0.3, 0.05]), R([fx + 0.38, 0.18]), R([fx + 0.28, 0.22])], { brush: 'HB', c: col.skinDark, w: 0.7, curv: 0.7 });
   else line(id + '-nose', [R([0.95, -0.02]), R([1.06, 0.16]), R([0.94, 0.22])], { brush: 'HB', w: 0.7, curv: 0.7 });

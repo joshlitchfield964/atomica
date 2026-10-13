@@ -219,7 +219,7 @@ export function drawTree(t, warm, ws, sway, blossom) {
   const [bx, by] = TREE_BASE;
   const trunk = [[bx - 58, by + 6], [bx - 30, by - 30], [bx - 26, 1250], [FORK[0] - 30, 980], [FORK[0] - 22 + topSway * 0.15, FORK[1]],
     [FORK[0] + 22 + topSway * 0.15, FORK[1] - 6], [FORK[0] + 26, 990], [bx + 30, 1240], [bx + 34, by - 28], [bx + 66, by + 8], [bx + 10, by + 2], [bx - 18, by + 8]];
-  shape('tree-trunk', trunk, { wash: bark, washA: 250, fill: barkD, fillA: 100, tex: 0.75, bleed: 0.03,
+  shape('tree-trunk', trunk, { wash: bark, washA: 250,
     hatch: { d: 9, a: 1.45, brush: 'HB', c: barkD, w: 0.45, rand: 0.35 }, w: 1.05, curv: 0.45 });
   lines('tree-bark', [[[bx - 6, by - 40], [bx - 2, 1300], [FORK[0] - 8, 1060]], [[bx + 14, 1340], [bx + 12, 1180]], [[FORK[0] + 6, 1000], [FORK[0] + 2, 900]]],
     { brush: 'HB', c: barkD, w: 0.6, curv: 0.6 });
@@ -247,12 +247,26 @@ export function drawTree(t, warm, ws, sway, blossom) {
   const back = [], front = [];
   CLUSTERS.forEach((c, i) => (c[4] ? front : back).push([blob(c, i), i]));
   washes('tree-back', back.map(([b]) => smoothClosed(b, 3)), leafBack, 252);
-  fills('tree-bf', back.map(([b]) => smoothClosed(b, 3)), hexMix(leafBack, '#1f2a1c', 0.35), 120, 0.08, 0.7, 0.5);
+  const dabs = (list, salt, n, scale) => {
+    const out = [];
+    list.forEach(([b, i]) => {
+      const [x, y, rx, ry] = CLUSTERS[i];
+      const off = lobeOffset(sway, i, y);
+      for (let k = 0; k < n; k++) {
+        const px = x + off + (hash(salt, i, k) - 0.5) * rx * 1.5, py = y + (hash(salt + 'y', i, k) - 0.35) * ry * 1.3;
+        const r = (10 + 14 * hash(salt + 'r', i, k)) * scale;
+        out.push(ellipsePts(px, py, r * 1.3, r, 8, 0, hash(salt + 'a', i, k) * 3));
+      }
+    });
+    return out;
+  };
+  washes('tree-bdab', dabs(back, 'bd', 7, 1), hexMix(leafBack, '#1f2a1c', 0.3), 150);
   washes('tree-limbs', limbs, bark, 252);
   lines('tree-limbs-ol', limbs.map((l) => l.concat([l[0]])), { brush: '2B', c: C.ink, w: 0.8, curv: 0.4 });
   // front canopy
   washes('tree-front', front.map(([b]) => smoothClosed(b, 3)), leafFront, 252);
-  fills('tree-ff', front.map(([b]) => smoothClosed(b, 3)), hexMix(leafFront, '#ffffff', 0.15), 110, 0.08, 0.65, 0.55);
+  washes('tree-fdab', dabs(front, 'fd', 6, 0.9), hexMix(leafFront, '#ffffff', 0.25), 150);
+  washes('tree-fdab2', dabs(front, 'fe', 4, 0.8), hexMix(leafFront, '#1f2a1c', 0.18), 140);
   // scalloped doodle outlines, all lobes batched
   const outl = back.concat(front).map(([b]) => {
     const sm = smoothClosed(b, 3);
@@ -322,11 +336,11 @@ export function drawBench(warmBloom = 0) {
   }
   for (const [y, h] of [[1184, 30], [1228, 30]]) {
     shape('bench-slat' + y, [[x0, y], [x1, y + 2], [x1, y + h], [x0, y + h - 2]],
-      { wash: wood, washA: 245, fill: PAL.woodDark, fillA: 45, tex: 0.6, bleed: 0.02, stroke: C.ink, w: 0.85, curv: 0.05, dense: false });
+      { wash: wood, washA: 245, stroke: C.ink, w: 0.85, curv: 0.05, dense: false });
   }
   lines('bench-grain', [[[x0 + 30, 1199], [x1 - 60, 1200]], [[x0 + 80, 1243], [x1 - 20, 1244]]], { brush: 'HB', c: PAL.woodDark, w: 0.5 });
   shape('bench-seat', [[338, SEAT_Y], [790, SEAT_Y + 2], [796, SEAT_Y + 24], [332, SEAT_Y + 22]],
-    { wash: wood, washA: 248, fill: PAL.woodDark, fillA: 85, tex: 0.75, bleed: 0.02, stroke: C.ink, w: 0.9, curv: 0.05, dense: false });
+    { wash: wood, washA: 248, stroke: C.ink, w: 0.9, curv: 0.05, dense: false });
   line('bench-seatgrain', [[360, SEAT_Y + 11], [760, SEAT_Y + 12]], { brush: 'HB', c: PAL.woodDark, w: 0.6 });
   for (const x of [378, 750]) {
     const gy = groundY(x);
@@ -340,7 +354,7 @@ export function drawBench(warmBloom = 0) {
 // ---------------------------------------------------------------------------
 export const TUFTS = (() => {
   const out = [];
-  for (let i = 0; i < 150; i++) {
+  for (let i = 0; i < 115; i++) {
     const x = -120 + hash('gx', i) * 1360;
     const y = groundY(x) + 6 + Math.pow(hash('gy', i), 1.15) * 640;
     const pc = y < 1620 ? mix(598, 570, (y - 1478) / 142) : y < 1780 ? mix(570, 630, (y - 1620) / 160) : y < 1960 ? mix(630, 560, (y - 1780) / 180) : 560;
@@ -616,8 +630,10 @@ export function sunCircle(n = 48) {
 
 export function drawSun(t, flood, rays) {
   if (flood > 0.01) {
-    shape('sun-glow', ellipsePts(SUN[0], SUN[1], SUN_R * 2.3 * flood, SUN_R * 2.3 * flood, 20),
-      { fill: PAL.sunGlow, fillA: 130 * flood, bleed: 0.3, tex: 0.25, border: 0.1, stroke: false });
+    for (let k = 0; k < 3; k++) {
+      const rr = SUN_R * (1.35 + k * 0.42) * flood;
+      washes('sun-glow' + k, [ellipsePts(SUN[0], SUN[1], rr, rr, 28)], PAL.sunGlow, 70 * flood);
+    }
     shape('sun-body', ellipsePts(SUN[0], SUN[1], SUN_R, SUN_R, 18),
       { wash: PAL.sun, washA: 235 * flood, fill: PAL.sunDeep, fillA: 90 * flood, bleed: 0.06, tex: 0.45, border: 0.6, stroke: false });
   }

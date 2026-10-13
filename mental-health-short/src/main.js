@@ -119,7 +119,7 @@ function drawUmbrella(U) {
   const hook = [add(G.hand, mul(G.d, 6)), hk, add(hk, add(mul(G.p, -15), mul(G.d, -10))), add(hk, add(mul(G.p, -23), mul(G.d, 6)))];
   // canopy: base gore colour, then alternate panels in a deeper tone (classic umbrella gores)
   const canopy = G.dome.concat(G.bottom.slice(1, -1));
-  shape('umb-canopy', canopy, { wash: '#efbd36', washA: 252, fill: '#d4971f', fillA: 70, tex: 0.6, bleed: 0.03, border: 0.55, stroke: false, dense: false });
+  shape('umb-canopy', canopy, { wash: '#efbd36', washA: 252, stroke: false, dense: false });
   if (G.open > 0.25) {
     const b = G.bottom; // ordered rib(+1), mid, rib(0.5), mid, rib(0), mid, rib(-0.5), mid, rib(-1)
     const panels = [];
