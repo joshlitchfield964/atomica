@@ -22,7 +22,7 @@ export const PAL = {
   rain: '#53667f',
   cloudDark: '#45495a', cloudLight: '#f1efe9',
   sun: '#f3c14e', sunDeep: '#ea9a33', sunGlow: '#f9dfa0',
-  leafSad: '#7f8b80', leafWarm: '#78a556', leafSad2: '#949e93', leafWarm2: '#9cc46f',
+  leafSad: '#6f7d70', leafWarm: '#5f9443', leafSad2: '#8e9a8b', leafWarm2: '#8fbf5e',
   bark: '#6f5a4a', barkDark: '#4d3e33',
   stem: '#5f8a4a', leaf: '#7fa95e',
   coral: '#ec866f', pink: '#f1a7a0', white: '#faf5ea', lilac: '#a89bd0', yellow: '#efbd3a', blossom: '#f4b8c0',
@@ -81,14 +81,15 @@ export function drawSet(st) {
   const farC = hexMix(PAL.hillFarSad, PAL.hillFarWarm, st.warm);
   shape('hillfar', far, { wash: farC, washA: 170, fill: farC, fillA: 150, bleed: 0.1, tex: 0.55, stroke: C.inkSoft, w: 0.55, brush: 'HB', per: 4 });
   drawTown(st);
-  for (let i = 0; i < 9; i++) {
-    const x = -40 + i * 150 + 50 * hash('tx', i);
-    if (x > 760 && x < 1010) continue;
-    const y = farHillY(x) + 10, h = 38 + 24 * hash('th', i);
-    line('ftreetr' + i, [[x, y], [x, y - h * 0.45]], { brush: 'HB', c: C.inkSoft, w: 0.6 });
-    shape('ftree' + i, ellipsePts(x, y - h * 0.72, h * 0.3, h * 0.42, 9),
-      { wash: hexMix('#8c9894', '#7da068', st.warm), washA: 215, stroke: C.inkSoft, w: 0.5, brush: 'HB', curv: 0.8 });
-  }
+  // little lollipop trees on the far hill (kept clear of the area behind the bench)
+  const ftC = hexMix('#7f8e86', '#6e9a57', st.warm);
+  [-20, 110, 250, 330, 720, 1040, 1120].forEach((x, i) => {
+    const y = farHillY(x) + 10, h = 30 + 20 * hash('th', i);
+    line('ftreetr' + i, [[x, y], [x + 1, y - h * 0.55]], { brush: 'HB', c: C.inkSoft, w: 0.7 });
+    const blobs = [[0, -h * 0.75, h * 0.28], [-h * 0.18, -h * 0.6, h * 0.22], [h * 0.18, -h * 0.62, h * 0.21]];
+    blobs.forEach(([bx, by, r], k) => shape('ftree' + i + k, ellipsePts(x + bx, y + by, r, r * 0.92, 9),
+      { wash: ftC, washA: 235, stroke: C.inkSoft, w: 0.45, brush: 'HB', curv: 0.8 }));
+  });
   // near hill with the far footpath the stranger walks along
   const near = [[-700, 1320]];
   for (let x = -600; x <= 1800; x += 140) near.push([x, nearHillY(x)]);
@@ -96,7 +97,7 @@ export function drawSet(st) {
   const nearC = hexMix(PAL.hillSad, PAL.hillWarm, st.warm);
   shape('hillnear', near, { wash: nearC, washA: 185, fill: nearC, fillA: 160, bleed: 0.1, tex: 0.6, stroke: C.inkSoft, w: 0.6, brush: 'HB', per: 4 });
   const fp = [];
-  for (let x = -300; x <= 1500; x += 120) fp.push([x, nearHillY(x) + 16]);
+  for (let x = -300; x <= 1500; x += 120) fp.push([x, farHillY(x) + 14]);
   line('farpath', fp, { brush: 'HB', c: hexMix(nearC, '#f3ead8', 0.55), w: 2.2, curv: 0.6 });
 
   // ground + foreground depth band
@@ -193,86 +194,104 @@ export function drawSmoke(t, warm) {
 // ---------------------------------------------------------------------------
 // Tree: trunk, branches, canopy clusters on springs, fluttering leaves, falling leaves
 // ---------------------------------------------------------------------------
-const TREE_BASE = [120, groundY(120) + 4];
+const TREE_BASE = [104, groundY(104) + 4];
+const FORK = [128, 800];
+// canopy lobes: [x, y, rx, ry, layer] — layer 0 = back (shade), 1 = front (light)
 const CLUSTERS = [
-  [-10, 600, 150, 120], [140, 520, 165, 130], [290, 600, 120, 100], [40, 760, 140, 105],
-  [230, 740, 125, 95], [-60, 470, 120, 100], [120, 410, 130, 100], [330, 470, 95, 80], [-40, 860, 110, 70],
+  [-60, 640, 125, 105, 0], [70, 520, 150, 120, 0], [230, 560, 140, 110, 0], [300, 700, 110, 85, 0], [-20, 420, 120, 95, 0],
+  [150, 400, 130, 100, 1], [-80, 520, 105, 90, 1], [40, 660, 130, 100, 1], [200, 690, 120, 90, 1], [250, 460, 110, 90, 1], [100, 300, 100, 80, 1],
 ];
 export const TREE_N = CLUSTERS.length;
 
 export function treeClusterTargets(t, ws) {
-  return CLUSTERS.map(([x, y], i) => wind(x, t - 0.15, ws) * 0.045 * (1 + (900 - y) / 700) + 0.012 * Math.sin(t * 1.3 + i));
+  return CLUSTERS.map(([x, y], i) => wind(x, t - 0.15, ws) * 0.05 * (1 + (900 - y) / 600) + 0.012 * Math.sin(t * 1.3 + i));
+}
+
+function lobeOffset(sway, i, y) {
+  return sway[i] * (150 + (900 - y) * 0.2);
 }
 
 export function drawTree(t, warm, ws, sway, blossom) {
   const bark = PAL.bark, barkD = PAL.barkDark;
-  const top = [150, 640];
-  const swayTop = (sway[1] + sway[2]) * 40;
-  // trunk
-  const trunk = [[TREE_BASE[0] - 34, TREE_BASE[1]], [TREE_BASE[0] - 20, 1200], [top[0] - 18 + swayTop * 0.3, 760], [top[0] + 4 + swayTop * 0.5, top[1]],
-    [top[0] + 22 + swayTop * 0.3, 760], [TREE_BASE[0] + 22, 1200], [TREE_BASE[0] + 38, TREE_BASE[1]]];
-  shape('tree-trunk', trunk, { wash: bark, washA: 245, fill: barkD, fillA: 90, tex: 0.7, bleed: 0.03,
-    hatch: { d: 10, a: 1.5, brush: 'HB', c: barkD, w: 0.5, rand: 0.3 }, w: 1.0, curv: 0.5 });
-  // branches
-  const br = CLUSTERS.slice(0, 6).map(([x, y], i) => {
-    const off = sway[i] * 120;
-    const s = [top[0] + swayTop * 0.4, mix(top[1], 900, 0.3 + 0.1 * (i % 3))];
-    return [s, [mix(s[0], x + off, 0.5), mix(s[1], y, 0.5) - 20], [x + off, y + 20]];
-  });
-  lines('tree-br', br, { brush: '2B', c: barkD, w: 1.6, curv: 0.6 });
-  // canopy: back shade first, then light; outlines batched
-  const leafA = hexMix(PAL.leafSad, PAL.leafWarm, warm), leafB = hexMix(PAL.leafSad2, PAL.leafWarm2, warm);
-  const blobs = CLUSTERS.map(([x, y, w, h], i) => {
-    const off = sway[i] * (180 + (900 - y) * 0.15);
+  const topSway = (sway[5] + sway[10]) * 60;
+  // trunk with root flare and a gentle S-curve
+  const [bx, by] = TREE_BASE;
+  const trunk = [[bx - 58, by + 6], [bx - 30, by - 30], [bx - 26, 1250], [FORK[0] - 30, 980], [FORK[0] - 22 + topSway * 0.15, FORK[1]],
+    [FORK[0] + 22 + topSway * 0.15, FORK[1] - 6], [FORK[0] + 26, 990], [bx + 30, 1240], [bx + 34, by - 28], [bx + 66, by + 8], [bx + 10, by + 2], [bx - 18, by + 8]];
+  shape('tree-trunk', trunk, { wash: bark, washA: 250, fill: barkD, fillA: 100, tex: 0.75, bleed: 0.03,
+    hatch: { d: 9, a: 1.45, brush: 'HB', c: barkD, w: 0.45, rand: 0.35 }, w: 1.05, curv: 0.45 });
+  lines('tree-bark', [[[bx - 6, by - 40], [bx - 2, 1300], [FORK[0] - 8, 1060]], [[bx + 14, 1340], [bx + 12, 1180]], [[FORK[0] + 6, 1000], [FORK[0] + 2, 900]]],
+    { brush: 'HB', c: barkD, w: 0.6, curv: 0.6 });
+  // main limbs (they sway with the canopy they carry)
+  const limb = (i, end, w0, w1) => {
+    const off = lobeOffset(sway, i, end[1]);
+    const e = [end[0] + off, end[1]];
+    const m = [mix(FORK[0], e[0], 0.5) + (e[0] > FORK[0] ? -20 : 20), mix(FORK[1], e[1], 0.55)];
+    return tubeOpen([FORK, m, e], [w0, w1]);
+  };
+  const limbs = [limb(1, [70, 560], 34, 12), limb(2, [235, 590], 30, 10), limb(6, [-70, 560], 26, 9), limb(5, [150, 430], 24, 8)];
+  // back canopy
+  const leafBack = hexMix(PAL.leafSad, PAL.leafWarm, warm), leafFront = hexMix(PAL.leafSad2, PAL.leafWarm2, warm);
+  const blob = ([x, y, rx, ry], i) => {
+    const off = lobeOffset(sway, i, y);
     const pts = [];
-    const n = 14;
+    const n = 16;
     for (let k = 0; k < n; k++) {
       const a = k / n * TAU;
-      const sc = 1 + 0.09 * Math.sin(a * 5 + i * 1.7) + 0.05 * Math.sin(a * 9 + i);
-      pts.push([x + off + Math.cos(a) * w * 0.62 * sc, y + Math.sin(a) * h * 0.62 * sc]);
+      const sc = 1 + 0.08 * Math.sin(a * 5 + i * 1.7) + 0.05 * Math.sin(a * 9 + i);
+      pts.push([x + off + Math.cos(a) * rx * sc, y + Math.sin(a) * ry * sc]);
     }
     return pts;
-  });
+  };
+  const back = [], front = [];
+  CLUSTERS.forEach((c, i) => (c[4] ? front : back).push([blob(c, i), i]));
+  washes('tree-back', back.map(([b]) => smoothClosed(b, 3)), leafBack, 252);
   off();
-  brush.fill(leafA, 180); brush.fillBleed(0.06); brush.fillTexture(0.6, 0.4);
-  blobs.forEach((b, i) => { if (i % 2 === 0 || i > 5) { seedEl('tree-bf', i); brush.polygon(smoothClosed(b, 3)); } });
-  brush.noFill();
-  brush.fill(leafB, 170); brush.fillBleed(0.06); brush.fillTexture(0.6, 0.4);
-  blobs.forEach((b, i) => { if (!(i % 2 === 0 || i > 5)) { seedEl('tree-bf', i); brush.polygon(smoothClosed(b, 3)); } });
+  brush.fill(hexMix(leafBack, '#1f2a1c', 0.35), 120); brush.fillBleed(0.08); brush.fillTexture(0.7, 0.5);
+  back.forEach(([b], i) => { seedEl('tree-bf', i); brush.polygon(smoothClosed(b, 3)); });
   off();
-  // scalloped leaf outlines (doodle "cloud" edges)
-  const outl = blobs.map((b) => {
-    const out = [];
+  washes('tree-limbs', limbs, bark, 252);
+  lines('tree-limbs-ol', limbs.map((l) => l.concat([l[0]])), { brush: '2B', c: C.ink, w: 0.8, curv: 0.4 });
+  // front canopy
+  washes('tree-front', front.map(([b]) => smoothClosed(b, 3)), leafFront, 252);
+  off();
+  brush.fill(hexMix(leafFront, '#ffffff', 0.15), 110); brush.fillBleed(0.08); brush.fillTexture(0.65, 0.55);
+  front.forEach(([b], i) => { seedEl('tree-ff', i); brush.polygon(smoothClosed(b, 3)); });
+  off();
+  // scalloped doodle outlines, all lobes batched
+  const outl = back.concat(front).map(([b]) => {
     const sm = smoothClosed(b, 3);
+    const out = [];
     for (let k = 0; k < sm.length; k += 2) out.push(sm[k]);
     out.push(out[0]);
     return out;
   });
-  lines('tree-ol', outl, { brush: '2B', c: hexMix(C.inkSoft, '#3d5a2e', warm * 0.6), w: 0.85, curv: 0.75 });
-  // leaf flicks inside the canopy that flutter
+  lines('tree-ol', outl, { brush: '2B', c: hexMix(C.inkSoft, '#2f4a24', warm * 0.6), w: 0.85, curv: 0.75 });
+  // fluttering leaf flicks
   const flicks = [];
-  CLUSTERS.forEach(([x, y, w, h], i) => {
-    const off = sway[i] * (180 + (900 - y) * 0.15);
-    for (let k = 0; k < 4; k++) {
-      const px = x + off + (hash('lf', i, k) - 0.5) * w * 0.8, py = y + (hash('lfy', i, k) - 0.5) * h * 0.7;
-      const a = -0.6 + 0.5 * Math.sin(t * 6 + i * 3 + k * 2) * clamp(ws) ;
-      flicks.push([[px, py], add([px, py], mul(dir(a), 16)), add([px, py], mul(dir(a + 0.9), 10))]);
+  CLUSTERS.forEach(([x, y, rx, ry], i) => {
+    const off = lobeOffset(sway, i, y);
+    for (let k = 0; k < 5; k++) {
+      const px = x + off + (hash('lf', i, k) - 0.5) * rx * 1.4, py = y + (hash('lfy', i, k) - 0.5) * ry * 1.2;
+      const a = -0.7 + 0.6 * Math.sin(t * 7 + i * 3 + k * 2) * clamp(ws);
+      flicks.push([[px, py], add([px, py], mul(dir(a), 14)), add([px, py], mul(dir(a + 1.0), 9))]);
     }
   });
-  lines('tree-flick', flicks, { brush: 'HB', c: hexMix('#55604f', '#3f6b2c', warm), w: 0.6, curv: 0.6 });
-  // blossoms
+  lines('tree-flick', flicks, { brush: 'HB', c: hexMix('#4c5847', '#3c6a28', warm), w: 0.65, curv: 0.6 });
+  // blossoms pop open in the last act
   if (blossom > 0) {
     const polys = [];
-    CLUSTERS.forEach(([x, y, w, h], i) => {
-      const off = sway[i] * (180 + (900 - y) * 0.15);
-      for (let k = 0; k < 6; k++) {
+    CLUSTERS.forEach(([x, y, rx, ry], i) => {
+      const off = lobeOffset(sway, i, y);
+      for (let k = 0; k < 7; k++) {
         const appear = spring(blossom, hash('bl', i, k) * 0.6, 2.2, 0.4);
         if (appear <= 0.01) continue;
-        const px = x + off + (hash('blx', i, k) - 0.5) * w * 1.0, py = y + (hash('bly', i, k) - 0.5) * h * 0.9;
-        polys.push(ellipsePts(px, py, 7 * appear, 7 * appear, 7));
+        const px = x + off + (hash('blx', i, k) - 0.5) * rx * 1.5, py = y + (hash('bly', i, k) - 0.5) * ry * 1.3;
+        polys.push(ellipsePts(px, py, 8 * appear, 8 * appear, 7));
       }
     });
-    washes('tree-blossom', polys, PAL.blossom, 235);
+    washes('tree-blossom', polys, PAL.blossom, 240);
+    lines('tree-blossom-ol', polys.map((q) => q.concat([q[0]])), { brush: 'HB', c: '#c9707d', w: 0.45, curv: 0.7 });
   }
 }
 
@@ -308,7 +327,7 @@ export function drawBench(warmBloom = 0) {
   }
   for (const [y, h] of [[1184, 30], [1228, 30]]) {
     shape('bench-slat' + y, [[x0, y], [x1, y + 2], [x1, y + h], [x0, y + h - 2]],
-      { wash: wood, washA: 245, fill: PAL.woodDark, fillA: 85, tex: 0.75, bleed: 0.02, stroke: C.ink, w: 0.85, curv: 0.05, dense: false });
+      { wash: wood, washA: 245, fill: PAL.woodDark, fillA: 45, tex: 0.6, bleed: 0.02, stroke: C.ink, w: 0.85, curv: 0.05, dense: false });
   }
   lines('bench-grain', [[[x0 + 30, 1199], [x1 - 60, 1200]], [[x0 + 80, 1243], [x1 - 20, 1244]]], { brush: 'HB', c: PAL.woodDark, w: 0.5 });
   shape('bench-seat', [[338, SEAT_Y], [790, SEAT_Y + 2], [796, SEAT_Y + 24], [332, SEAT_Y + 22]],
@@ -419,7 +438,7 @@ export function drawCloud(t, c, cs) {
   const col = hexMix(PAL.cloudLight, PAL.cloudDark, k);
   shape('cloud', cs.outline, {
     wash: col, washA: mix(205, 235, k), fill: hexMix(col, C.ink, 0.3 * k), fillA: 140, bleed: 0.12, tex: 0.75, border: 0.6,
-    hatch: k > 0.45 ? { d: 12, a: 2.5, brush: 'charcoal', c: '#2a2b33', w: 0.32, rand: 0.25 } : null,
+    hatch: k > 0.6 ? { d: 22, a: 2.3, brush: 'charcoal', c: '#2f3039', w: 0.3, rand: 0.6, gradient: 0.4 } : null,
     stroke: hexMix(C.inkSoft, C.ink, k), w: mix(0.8, 1.2, k), curv: 0.7, per: 2,
   });
   const arcs = [1, 2, 5, 3].map((li) => {
@@ -497,7 +516,7 @@ export function drawRain(t, cs, rain, surfaceAt) {
       }
     }
   }
-  lines('rain', streaks, { brush: 'HB', c: PAL.rain, w: 0.95 });
+  lines('rain', streaks, { brush: 'HB', c: PAL.rain, w: 1.1 });
   lines('splash', splashes, { brush: 'HB', c: '#6c7e96', w: 0.75 });
 }
 

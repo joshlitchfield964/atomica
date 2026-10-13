@@ -14,7 +14,7 @@ export const NF = FPS * DURATION;
 // ---------------------------------------------------------------------------
 export const SHOTS = [
   { name: 'Alone', t0: 0, t1: 5.0, cam: [[0, [540, 890, 1.0]], [5.0, [535, 930, 1.12], 'l']] },
-  { name: 'Spiral', t0: 5.0, t1: 9.5, cam: [[5.0, [535, 930, 1.12]], [9.5, [500, 1045, 1.95]]] },
+  { name: 'Spiral', t0: 5.0, t1: 9.5, cam: [[5.0, [535, 930, 1.12]], [9.5, [505, 1112, 2.2]]] },
   { name: 'Noticed', t0: 9.5, t1: 14.0, cam: [[9.5, [600, 1010, 1.3]], [14.0, [592, 1018, 1.34], 'l']] },
   { name: 'Shelter', t0: 14.0, t1: 17.5, cam: [[14.0, [575, 1040, 1.45]], [17.5, [572, 1062, 1.56], 'l']] },
   { name: 'Reach', t0: 17.5, t1: 21.0, cam: [[17.5, [588, 1335, 3.1]], [21.0, [588, 1330, 3.3], 'l']] },
@@ -52,7 +52,7 @@ export function look(t) {
 
 export function cloudState(t) {
   return {
-    pos: track([[0, [482, 560]], [21.4, [482, 560]], [24, [430, 730]], [27.5, [372, 930]]], t),
+    pos: track([[0, [482, 560]], [5, [482, 565]], [9.4, [490, 625]], [11, [482, 585]], [21.4, [482, 575]], [24, [430, 730]], [27.5, [372, 930]]], t),
     scale: track([[0, 0.94], [5, 0.98], [9.4, 1.3], [16.5, 1.24], [21.4, 1.0], [24.5, 0.5], [27.5, 0.3]], t),
     dark: track([[0, 0.86], [5, 0.88], [9, 1], [16.5, 1], [19.5, 0.72], [21.4, 0.45], [23.6, 0.05], [30, 0]], t),
     agitation: track([[0, 0.2], [5, 0.3], [8.5, 1], [11, 0.5], [16, 0.3], [19, 0.1]], t),
@@ -342,10 +342,10 @@ export function umbrellaGeom(U) {
 // ---------------------------------------------------------------------------
 // STRANGER (background passer-by, eyes on phone)
 // ---------------------------------------------------------------------------
-export const X_SCALE = 0.56;
+export const X_SCALE = 0.38;
 export function poseStranger(t, hillY) {
   const f = 1;
-  const x = track([[1.5, -60], [5.3, 900, 'l']], t);
+  const x = track([[1.3, -40], [5.5, 760, 'l']], t);
   const phase = ((x + 60) / (2 * S_STEP * X_SCALE * 0.95)) % 1;
   const gy = hillY(x) + 18;
   const W = walkLegs(STRANGER, x, phase, 1, gy, f, X_SCALE);
@@ -354,11 +354,11 @@ export function poseStranger(t, hillY) {
   const armLen = (STRANGER.upper + STRANGER.fore) * X_SCALE;
   const swing = Math.sin(TAU * phase) * 0.4;
   return {
-    facing: f, pelvis: P, scale: X_SCALE, lean: 0.12, curl: 0.25, neck: 0.5, breath: 0,
+    facing: f, pelvis: P, scale: X_SCALE, lean: 0.14, curl: 0.3, neck: 0.62, breath: 0,
     footN: [W.feet[0].x, W.feet[0].y], footF: [W.feet[1].x, W.feet[1].y], footAngN: W.feet[0].ang, footAngF: W.feet[1].ang,
     handN: add(shN, [f * 30 * X_SCALE, 34 * X_SCALE]), handF: add(shN, rot([0, armLen * 0.93], f * swing)),
     handKindN: 'phone', handKindF: 'mitt', handDirN: norm([f * 0.6, -1]), coatHem: 40,
-    face: { open: blink(t, BLINK_X), smile: 0, worry: 0, turn: 0.4, look: [0.6, 1] },
+    face: { open: 0.3, smile: -0.1, worry: 0, turn: 0.15, look: [0.6, 1] },
     order: ['legF', 'armF', 'torso', 'legN', 'head', 'armN'],
   };
 }

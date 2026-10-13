@@ -282,8 +282,8 @@ function renderScene(fi) {
   Wd.drawFallingLeaves(t, L.warm, L.wind, St.LEAVES);
 
   // passer-by on the far path
-  if (t > 1.4 && t < 5.6) {
-    const xJ = solve(STRANGER, St.poseStranger(t, (x) => 1268 + 30 * Math.sin(x * 0.009 + 2.1)));
+  if (t > 1.2 && t < 5.6) {
+    const xJ = solve(STRANGER, St.poseStranger(t, (x) => 1150 + 48 * Math.sin(x * 0.006 + 0.5) + 22 * Math.sin(x * 0.017) - 4));
     drawCharacter(xJ);
     drawPhoneGlow(xJ);
   }

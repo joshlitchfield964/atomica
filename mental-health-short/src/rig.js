@@ -284,8 +284,10 @@ function drawHead(j) {
     const p = R(e);
     if (open < 0.35) {
       const s = smile > 0.3 ? -1 : 1; // happy closed eyes curve up
-      line(id + '-eyec' + k, [R([e[0] - 0.13 * scale, e[1] - 0.02]), R([e[0], e[1] + 0.06 * s]), R([e[0] + 0.13 * scale, e[1] - 0.02])],
-        { brush: 'pen', w: 0.75, curv: 0.8 });
+      line(id + '-eyec' + k, [R([e[0] - 0.16 * scale, e[1] - 0.01]), R([e[0], e[1] + 0.09 * s]), R([e[0] + 0.16 * scale, e[1] - 0.01])],
+        { brush: '2B', w: 1.15, curv: 0.8 });
+      if (s > 0) lines(id + '-lash' + k, [[R([e[0] - 0.08 * scale, e[1] + 0.06]), R([e[0] - 0.11 * scale, e[1] + 0.15])], [R([e[0] + 0.06 * scale, e[1] + 0.07]), R([e[0] + 0.08 * scale, e[1] + 0.16])]],
+        { brush: 'HB', w: 0.7 });
     } else {
       const lp = add(p, [look[0] * r * 0.05 * f, look[1] * r * 0.05]);
       dot(id + '-eye' + k, lp, r * 0.105 * scale * mix(0.6, 1, open), C.ink, 255);
@@ -297,8 +299,8 @@ function drawHead(j) {
   drawEye('N', eyeN, 1);
   // brows: worried (inner ends up) ↔ soft
   const worry = face.worry ?? 0;
-  const brow = (k, e, s) => line(id + '-brow' + k, [R([e[0] - 0.14 * s, e[1] - 0.24 + worry * 0.0]), R([e[0] + 0.13 * s, e[1] - 0.26 - worry * 0.12])],
-    { brush: 'HB', w: 0.75, curv: 0.4 });
+  const brow = (k, e, s) => line(id + '-brow' + k, [R([e[0] - 0.15 * s, e[1] - 0.25 + worry * 0.03]), R([e[0] + 0.02 * s, e[1] - 0.29 - worry * 0.05]), R([e[0] + 0.15 * s, e[1] - 0.27 - worry * 0.13])],
+    { brush: '2B', w: 0.95, curv: 0.6 });
   if (turn > 0.25) brow('F', [eyeF[0] + 0.02, eyeF[1]], -1);
   brow('N', eyeN, 1);
   // nose
