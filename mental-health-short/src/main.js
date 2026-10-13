@@ -37,7 +37,7 @@ function curlAnchors(sJ) {
   const r = SUNNY.headR, f = sJ.f;
   const tilt = (sJ.pose.headTilt ?? 0) + (sJ.pose.lean ?? 0) * 0.35 + (sJ.pose.neck ?? 0) * 0.5;
   const R = (p) => add(sJ.H, rot([p[0] * f * r, p[1] * r], f * tilt));
-  return [R([0.55, -0.55]), R([-0.75, 0.25]), R([-0.55, 0.55])];
+  return [R([-0.62, -0.5]), R([-0.8, 0.2]), R([-0.6, 0.55])];
 }
 
 function precompute() {
@@ -235,14 +235,15 @@ function drawLastDrops(t) {
 }
 
 function drawBloom(t) {
-  if (t < 19.25 || t > 21.2) return;
+  if (t < 19.2 || t > 21.2) return;
   const c = [585, Wd.SEAT_Y - 10];
-  const cols = ['#f6c77a', '#f2a07a', '#f7dc9a'];
-  for (let k = 0; k < 3; k++) {
-    const u = easeOut(clamp((t - 19.3 - k * 0.2) / 1.3));
+  const cols = ['#f8c56c', '#f39c74', '#fbe2a0', '#f6b1a0'];
+  for (let k = 0; k < 4; k++) {
+    const u = easeOut(clamp((t - 19.25 - k * 0.16) / 1.2));
     if (u <= 0) continue;
-    const r = (60 + 170 * k) * u + 20;
-    shape('bloom' + k, ellipsePts(c[0], c[1], r, r * 0.92, 18), { fill: cols[k], fillA: 150 * (1 - u * 0.55), bleed: 0.3, tex: 0.5, border: 0.6, stroke: false });
+    const r = (40 + 150 * k) * u + 24;
+    const pts = ellipsePts(c[0], c[1], r, r * 0.9, 20).map((p, i) => add(p, mul(norm(sub(p, c)), 10 * Math.sin(i * 2.3 + k))));
+    shape('bloom' + k, pts, { fill: cols[k], fillA: 210 * (1 - u * 0.5), bleed: 0.35, tex: 0.55, border: 0.7, stroke: false });
   }
 }
 

@@ -17,7 +17,7 @@ export const INK = {
 // pencil grain with the transform, which would turn zoomed lines into sparse dots.
 export const X = (p) => [(p[0] - INK.cam.cx) * INK.cam.z, (p[1] - INK.cam.cy) * INK.cam.z];
 export const XS = (pts) => pts.map(X);
-const WZ = () => Math.pow(INK.cam.z, 0.62);
+const WZ = () => Math.pow(INK.cam.z, 0.45);
 
 export const C = {
   paper: '#f3ead8',
