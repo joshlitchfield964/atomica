@@ -433,7 +433,6 @@ export function drawCloud(t, c, cs) {
   const col = hexMix(PAL.cloudLight, PAL.cloudDark, k);
   shape('cloud', cs.outline, {
     wash: col, washA: mix(205, 235, k), fill: hexMix(col, C.ink, 0.3 * k), fillA: 140, bleed: 0.12, tex: 0.75, border: 0.6,
-    hatch: k > 0.6 ? { d: 22, a: 2.3, brush: 'charcoal', c: '#2f3039', w: 0.3, rand: 0.6, gradient: 0.4 } : null,
     stroke: hexMix(C.inkSoft, C.ink, k), w: mix(0.8, 1.2, k), curv: 0.7, per: 2,
   });
   const arcs = [1, 2, 5, 3].map((li) => {
