@@ -249,11 +249,11 @@ function drawHead(j) {
       back.push([Math.cos(a * Math.PI / 180) * rr, Math.sin(a * Math.PI / 180) * rr]);
     }
     back.push([0.15, -1.08], [0.05, -0.2], [-0.25, 0.75], [0.05, 1.05]);
-    shape(id + '-hairB', back.map(R), { wash: col.hair, washA: 252, fill: col.hairLight, fillA: 50, tex: 0.7, w: 1.0, curv: 0.6 });
+    shape(id + '-hairB', back.map(R), { wash: col.hair, washA: 252, w: 1.0, curv: 0.6 });
   } else if (def.id === 'S') {
     const bo = pose.bun || [0, 0];
     const bc = add(R([-0.58, -0.86]), mul(bo, W(j, 1)));
-    shape(id + '-bun', ellipsePts(bc[0], bc[1], r * 0.5, r * 0.46, 12), { wash: col.hair, washA: 252, fill: col.hairLight, fillA: 70, tex: 0.7, w: 1.0, curv: 0.75 });
+    shape(id + '-bun', ellipsePts(bc[0], bc[1], r * 0.5, r * 0.46, 12), { wash: col.hair, washA: 252, w: 1.0, curv: 0.75 });
     line(id + '-bunline', [add(bc, [-r * 0.25, -r * 0.1]), add(bc, [0, r * 0.12]), add(bc, [r * 0.28, -r * 0.05])], { brush: 'HB', c: col.hairLight, w: 0.7, curv: 0.7 });
     const back = [];
     for (let a = 95; a <= 290; a += 20) back.push([Math.cos(a * Math.PI / 180) * 1.1, Math.sin(a * Math.PI / 180) * 1.1]);
@@ -321,13 +321,13 @@ function drawHead(j) {
   if (def.id === 'A') {
     const fr = [[-0.95, 0.25], [-1.05, -0.3], [-0.7, -0.92], [-0.1, -1.12], [0.5, -0.98], [0.88, -0.62], [1.0, -0.3],
       [0.78, -0.22], [0.6, -0.42], [0.42, -0.2], [0.22, -0.45], [-0.1, -0.35], [-0.45, -0.05], [-0.6, 0.35]];
-    shape(id + '-hairF', fr.map(R), { wash: col.hair, washA: 252, fill: col.hairLight, fillA: 60, tex: 0.7, w: 1.0, curv: 0.55 });
+    shape(id + '-hairF', fr.map(R), { wash: col.hair, washA: 252, w: 1.0, curv: 0.55 });
     lines(id + '-strands', [[R([-0.6, -0.8]), R([-0.8, -0.3]), R([-0.75, 0.2])], [R([0.1, -0.95]), R([-0.25, -0.75]), R([-0.45, -0.35])]],
       { brush: 'HB', c: col.hairLight, w: 0.55, curv: 0.6 });
   } else if (def.id === 'S') {
     const fr = [[-0.92, 0.1], [-0.95, -0.45], [-0.55, -0.95], [0.05, -1.12], [0.6, -0.92], [0.9, -0.5], [0.72, -0.48],
       [0.5, -0.62], [0.2, -0.5], [-0.15, -0.55], [-0.5, -0.25], [-0.62, 0.2]];
-    shape(id + '-hairF', fr.map(R), { wash: col.hair, washA: 252, fill: col.hairLight, fillA: 70, tex: 0.7, w: 1.0, curv: 0.55 });
+    shape(id + '-hairF', fr.map(R), { wash: col.hair, washA: 252, w: 1.0, curv: 0.55 });
     lines(id + '-strands', [[R([-0.5, -0.85]), R([-0.2, -0.75]), R([0.15, -0.85])], [R([-0.75, -0.4]), R([-0.55, -0.2])]],
       { brush: 'HB', c: col.hairLight, w: 0.55, curv: 0.6 });
   } else {

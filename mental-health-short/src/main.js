@@ -114,20 +114,42 @@ function surfaceFn(aJ, sJ, U, t) {
 
 function drawUmbrella(U) {
   const G = U.geom;
-  line('umb-shaft', [G.hand, G.apex], { brush: '2B', c: C.ink, w: 1.25 });
+  const rimC = add(G.apex, mul(G.d, -G.Hc));
   const hk = add(G.hand, mul(G.d, -24));
-  line('umb-hook', [add(G.hand, mul(G.d, 6)), hk, add(hk, add(mul(G.p, -15), mul(G.d, -10))), add(hk, add(mul(G.p, -23), mul(G.d, 6)))],
-    { brush: '2B', c: Wd.PAL.woodDark, w: 1.7, curv: 0.8 });
+  const hook = [add(G.hand, mul(G.d, 6)), hk, add(hk, add(mul(G.p, -15), mul(G.d, -10))), add(hk, add(mul(G.p, -23), mul(G.d, 6)))];
+  // canopy: base gore colour, then alternate panels in a deeper tone (classic umbrella gores)
   const canopy = G.dome.concat(G.bottom.slice(1, -1));
-  shape('umb-canopy', canopy, { wash: '#e9b431', washA: 250, fill: '#c88f1c', fillA: 85, tex: 0.6, bleed: 0.04, border: 0.5, w: 1.1, curv: 0.4, dense: false,
-    hatch: G.open > 0.5 ? { d: 11, a: 0.6, brush: 'HB', c: '#c4891a', w: 0.4 } : null });
-  const ribs = [];
-  for (let i = 1; i < G.ribs.length - 1; i++) {
-    const a = add(G.apex, mul(G.d, -6)), b = G.ribs[i];
-    ribs.push([a, add(lerp2(a, b, 0.5), mul(G.d, G.Rc * 0.04)), b]);
+  shape('umb-canopy', canopy, { wash: '#efbd36', washA: 252, fill: '#d4971f', fillA: 70, tex: 0.6, bleed: 0.03, border: 0.55, stroke: false, dense: false });
+  if (G.open > 0.25) {
+    const b = G.bottom; // ordered rib(+1), mid, rib(0.5), mid, rib(0), mid, rib(-0.5), mid, rib(-1)
+    const panels = [];
+    for (const k of [0, 4]) {
+      const top = add(G.apex, mul(G.d, -8));
+      const ribA = b[k], mid = b[k + 1], ribB = b[k + 2];
+      const bulgeA = add(lerp2(top, ribA, 0.5), mul(sub(ribA, rimC), 0.12));
+      const bulgeB = add(lerp2(top, ribB, 0.5), mul(sub(ribB, rimC), 0.12));
+      panels.push(smoothOpen([top, bulgeA, ribA], 4).concat([mid], smoothOpen([ribB, bulgeB, top], 4)));
+    }
+    washes('umb-gores', panels, '#dba227', 230);
   }
-  lines('umb-ribs', ribs, { brush: 'HB', c: '#b17c14', w: 0.8, curv: 0.6 });
-  line('umb-tip', [G.apex, add(G.apex, mul(G.d, 20))], { brush: '2B', w: 1.2 });
+  const ribs = G.bottom.filter((_, i) => i % 2 === 0).slice(1, -1).map((r) => {
+    const top = add(G.apex, mul(G.d, -8));
+    return [top, add(lerp2(top, r, 0.5), mul(sub(r, rimC), 0.12)), r];
+  });
+  lines('umb-ribs', ribs, { brush: 'HB', c: '#a8740f', w: 0.85, curv: 0.6 });
+  shape('umb-canopy-ol', canopy, { stroke: C.ink, w: 1.1, curv: 0.35, dense: false });
+  // shaft below the rim, handle and tip
+  line('umb-shaft', [G.hand, add(rimC, mul(G.d, -4))], { brush: '2B', c: C.ink, w: 1.3 });
+  line('umb-hook', hook, { brush: '2B', c: Wd.PAL.woodDark, w: 1.8, curv: 0.8 });
+  line('umb-tip', [G.apex, add(G.apex, mul(G.d, 20))], { brush: '2B', w: 1.3 });
+  if (G.open > 0.25) {
+    // drips hanging from the rib tips
+    const drips = G.bottom.filter((_, i) => i % 2 === 0).map((r, i) => {
+      const ph = (INK.T * 1.6 + hash('drip', i)) % 1;
+      return [add(r, [0, 4 + ph * 26]), add(r, [0, 12 + ph * 26])];
+    });
+    lines('umb-drips', drips, { brush: 'HB', c: Wd.PAL.rain, w: 0.9 });
+  }
 }
 
 // tangle → thread → sun
@@ -214,7 +236,7 @@ function drawLastDrops(t) {
 
 function drawBloom(t) {
   if (t < 19.25 || t > 21.2) return;
-  const c = [588, Wd.SEAT_Y - 10];
+  const c = [585, Wd.SEAT_Y - 10];
   const cols = ['#f6c77a', '#f2a07a', '#f7dc9a'];
   for (let k = 0; k < 3; k++) {
     const u = easeOut(clamp((t - 19.3 - k * 0.2) / 1.3));

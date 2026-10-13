@@ -17,7 +17,7 @@ export const SHOTS = [
   { name: 'Spiral', t0: 5.0, t1: 9.5, cam: [[5.0, [535, 930, 1.12]], [9.5, [505, 1112, 2.2]]] },
   { name: 'Noticed', t0: 9.5, t1: 14.0, cam: [[9.5, [600, 1010, 1.3]], [14.0, [592, 1018, 1.34], 'l']] },
   { name: 'Shelter', t0: 14.0, t1: 17.5, cam: [[14.0, [575, 1040, 1.45]], [17.5, [572, 1062, 1.56], 'l']] },
-  { name: 'Reach', t0: 17.5, t1: 21.0, cam: [[17.5, [588, 1335, 3.1]], [21.0, [588, 1330, 3.3], 'l']] },
+  { name: 'Reach', t0: 17.5, t1: 21.0, cam: [[17.5, [585, 1335, 3.1]], [21.0, [585, 1330, 3.3], 'l']] },
   { name: 'Untangle', t0: 21.0, t1: 25.5, cam: [[21.0, [575, 1060, 1.4]], [22.0, [588, 1000, 1.38]], [23.8, [650, 770, 1.15]], [25.5, [642, 785, 1.12]]] },
   { name: 'Together', t0: 25.5, t1: 30.01, cam: [[25.5, [642, 785, 1.12]], [27.4, [600, 975, 1.1]], [30, [565, 985, 1.0]]] },
 ];
@@ -52,7 +52,7 @@ export function look(t) {
 
 export function cloudState(t) {
   return {
-    pos: track([[0, [482, 560]], [5, [482, 565]], [9.4, [490, 625]], [11, [482, 585]], [21.4, [482, 575]], [24, [430, 730]], [27.5, [372, 930]]], t),
+    pos: track([[0, [470, 560]], [5, [470, 565]], [9.4, [478, 625]], [11, [480, 585]], [21.4, [490, 575]], [24, [430, 730]], [27.5, [372, 930]]], t),
     scale: track([[0, 0.94], [5, 0.98], [9.4, 1.3], [16.5, 1.24], [21.4, 1.0], [24.5, 0.5], [27.5, 0.3]], t),
     dark: track([[0, 0.86], [5, 0.88], [9, 1], [16.5, 1], [19.5, 0.72], [21.4, 0.45], [23.6, 0.05], [30, 0]], t),
     agitation: track([[0, 0.2], [5, 0.3], [8.5, 1], [11, 0.5], [16, 0.3], [19, 0.1]], t),
@@ -68,7 +68,7 @@ export const BIRDS = [[0.3, 250, 9, 150], [0.8, 290, 7, 140], [25.7, 380, 24, 27
 // The tangle → thread → sun doodle
 export function threadState(t) {
   return {
-    amount: track([[0, 0.15], [4.5, 0.35], [8.5, 1], [14, 1], [15.5, 0.8], [19.5, 0.55], [21.4, 0.5]], t),
+    amount: track([[0, 0.15], [4.5, 0.35], [8.5, 1], [14, 1], [16, 0.6], [19.5, 0.4], [21.4, 0.38]], t),
     unravel: track([[21.4, 0], [22.2, 1]], t),
     draw: track([[21.9, 0], [23.5, 1, 'S']], t),
     flood: track([[23.3, 0], [24.3, 1]], t),
@@ -122,8 +122,8 @@ function blink(t, list) {
 // ---------------------------------------------------------------------------
 // ASH
 // ---------------------------------------------------------------------------
-export const A_PELVIS = [486, SEAT_Y - 26];
-const A_HAND_HOLD = [566, SEAT_Y - 14];
+export const A_PELVIS = [470, SEAT_Y - 26];
+const A_HAND_HOLD = [562, SEAT_Y - 14];
 
 export function poseAsh(t, sunnyJ) {
   const f = 1;
@@ -147,7 +147,7 @@ export function poseAsh(t, sunnyJ) {
   const lapN = add(P, [48, -16]), lapF = add(P, [36, -22]);
   let handN = lerp2(lapN, hugN, k), handF = lerp2(lapF, hugF, k);
   const reach = track([[17.6, [0, 0]], [18.15, [1, 0]], [18.45, [0.55, 0.08]], [18.75, [0.6, 0.06]], [19.1, [1.0, 1.0]]], t);
-  const reachPt = lerp2(lerp2(lapN, [552, SEAT_Y - 30], reach[0]), A_HAND_HOLD, reach[1]);
+  const reachPt = lerp2(lerp2(lapN, [548, SEAT_Y - 32], reach[0]), A_HAND_HOLD, reach[1]);
   if (t > 17.6) handN = reachPt;
 
   const open = track([[0, 0], [15.6, 0], [16.2, 0.5], [17.0, 0.62], [18.0, 0.82], [19.4, 1], [25.9, 1], [26.7, 0.1]], t);
@@ -187,8 +187,8 @@ export function poseAsh(t, sunnyJ) {
 // ---------------------------------------------------------------------------
 const S_STEP = 132;
 const S_X0 = 1130;
-export const S_STOP_X = 664;
-export const S_SEAT = [650, SEAT_Y - 28];
+export const S_STOP_X = 692;
+export const S_SEAT = [680, SEAT_Y - 28];
 
 function sunnyX(t) {
   return track([[9.5, S_X0], [11.4, S_STOP_X, 'o']], t);
@@ -256,7 +256,7 @@ export function poseSunny(t) {
   let handF = add(shN, rot([0, armLen * 0.92], f * swingA * 0.5 - 0.15 * f));
   // seated: near hand on own knee, then palm-up on the bench
   const handNKnee = add(S_SEAT, [f * 52, -6]);
-  const palmUp = [606, SEAT_Y - 12];
+  const palmUp = [608, SEAT_Y - 12];
   const nSeat = track([[13.3, 0], [13.8, 1]], t);
   handN = lerp2(handN, handNKnee, mix(sit * 0.9, 1, nSeat) * sit);
   const toPalm = track([[15.5, 0], [16.4, 1]], t);
@@ -300,10 +300,10 @@ export function umbrellaState(t, P, f, sit, walkAmt, phase) {
   let angle = mix(Math.PI - 0.45 + swing * 0.5, Math.PI - 0.16, sit);
   // Shot 4: lift (anticipation dip) and pop
   const lift = track([[14.15, 0], [14.45, -0.12], [14.75, 1, 'o']], t);
-  const raised = [614, 1122];
+  const raised = [636, 1166];
   hand = lerp2(hand, raised, clamp(lift));
   hand[1] += Math.min(0, lift) * -60;
-  angle = mix(angle, -0.24, clamp(lift));
+  angle = mix(angle, -0.13, clamp(lift));
   // Shot 6: fold and lower to rest against the bench
   const lower = track([[23.9, 0], [24.8, 1]], t);
   hand = lerp2(hand, seatedRest, lower);
@@ -319,7 +319,7 @@ export function umbrellaGeom(U) {
   const d = [Math.sin(U.angle), -Math.cos(U.angle)];
   const p = [Math.cos(U.angle), Math.sin(U.angle)];
   const o = U.open;
-  const apex = add(U.hand, mul(d, 222));
+  const apex = add(U.hand, mul(d, 250));
   const Rc = 210 * mix(0.13, 1, o);
   const Hc = mix(178, 116, clamp(o));
   const dome = [];
@@ -333,7 +333,7 @@ export function umbrellaGeom(U) {
   const bottom = [];
   for (let i = ribs.length - 1; i >= 0; i--) {
     bottom.push(ribs[i]);
-    if (i > 0) bottom.push(add(lerp2(ribs[i], ribs[i - 1], 0.5), mul(d, 22 * clamp(o))));
+    if (i > 0) bottom.push(add(lerp2(ribs[i], ribs[i - 1], 0.5), mul(d, 30 * clamp(o))));
   }
   return { hand: U.hand, apex, d, p, dome, bottom, ribs, open: o, Rc, Hc };
 }
