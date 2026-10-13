@@ -348,7 +348,7 @@ function renderScene(fi) {
   sPose.bun = sim.bun.map((v) => clamp(v, -9, 9) * 0.9);
   const U = { ...sPose.umbrella };
   U.geom = St.umbrellaGeom(U);
-  const umbrellaFront = U.open > 0.04 || track([[14.15, 0], [14.6, 1]], t) > 0.5 && t < 24;
+  const umbrellaFront = U.open > 0.04 || (track([[14.15, 0], [14.6, 1]], t) > 0.5 && t < 21.9);
 
   const ashExtras = {
     afterTorso: [() => lines('A-hood', sim.hood, { brush: 'HB', c: '#e9e3d6', w: 1.3, curv: 0.6 })],
@@ -400,8 +400,8 @@ function renderScene(fi) {
   mark('cloud');
   Wd.drawRain(t, cs, cst.rain, surfaceFn(aJ, sJ, U, t));
   mark('rain');
-  if (umbrellaFront && t >= 9.5) drawUmbrella(U);
   drawThread(t, aJ);
+  if (umbrellaFront && t >= 9.5) drawUmbrella(U);
   drawLastDrops(t);
   mark('umbrella-thread');
 

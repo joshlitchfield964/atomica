@@ -138,7 +138,7 @@ butterfly, birds.
 - **22.0:** the cloud bleaches from grey to white and shrinks. It wrings out its last
   drops, and each one hits the ground and **pops into a flower** (stem springs up, petals
   overshoot open).
-- **23.6:** Sunny folds the umbrella and leans it against the bench.
+- **21.0:** as the rain stops, Sunny folds the umbrella and rests it against the bench.
 
 ### SHOT 7 · "Together" · 0:25.5–0:30.0 · WIDE pull-back
 - **Camera:** z 1.40 → 1.00, pulling back and up to reveal sky and field.

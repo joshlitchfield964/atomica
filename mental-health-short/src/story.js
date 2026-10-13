@@ -300,16 +300,16 @@ export function umbrellaState(t, P, f, sit, walkAmt, phase) {
   let angle = mix(Math.PI - 0.45 + swing * 0.5, Math.PI - 0.16, sit);
   // Shot 4: lift (anticipation dip) and pop
   const lift = track([[14.15, 0], [14.45, -0.12], [14.75, 1, 'o']], t);
-  const raised = [716, 1124];
+  const raised = [690, 1112];
   hand = lerp2(hand, raised, clamp(lift));
   hand[1] += Math.min(0, lift) * -60;
-  angle = mix(angle, -0.2, clamp(lift));
+  angle = mix(angle, -0.42, clamp(lift));
   // Shot 6: fold and lower to rest against the bench
-  const lower = track([[23.9, 0], [24.8, 1]], t);
+  const lower = track([[21.45, 0], [22.3, 1]], t);
   hand = lerp2(hand, seatedRest, lower);
   angle = mix(angle, Math.PI - 0.16, lower);
   const pop = spring(t, 14.72, 2.4, 0.3);
-  const close = track([[23.4, 0], [23.95, 1]], t);
+  const close = track([[21.0, 0], [21.55, 1]], t);
   const openAmt = clamp(pop, 0, 1.25) * (1 - close);
   const handDir = norm(rot([0, -1], angle + 0.6 * -f));
   return { hand, angle, open: openAmt, handDir };
