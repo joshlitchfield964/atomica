@@ -174,7 +174,7 @@ export function poseAsh(t, sunnyJ) {
   if (sunnyJ) {
     const w = track([[25.8, 0], [27.3, 1]], t);
     if (w > 0) {
-      pose.headPos = add(sunnyJ.shN, [-44, -36]);
+      pose.headPos = add(sunnyJ.shN, [-64, -20]);
       pose.headPosW = w;
       pose.headTilt = 0.35 * w;
     }
@@ -300,10 +300,10 @@ export function umbrellaState(t, P, f, sit, walkAmt, phase) {
   let angle = mix(Math.PI - 0.45 + swing * 0.5, Math.PI - 0.16, sit);
   // Shot 4: lift (anticipation dip) and pop
   const lift = track([[14.15, 0], [14.45, -0.12], [14.75, 1, 'o']], t);
-  const raised = [636, 1166];
+  const raised = [716, 1124];
   hand = lerp2(hand, raised, clamp(lift));
   hand[1] += Math.min(0, lift) * -60;
-  angle = mix(angle, -0.13, clamp(lift));
+  angle = mix(angle, -0.2, clamp(lift));
   // Shot 6: fold and lower to rest against the bench
   const lower = track([[23.9, 0], [24.8, 1]], t);
   hand = lerp2(hand, seatedRest, lower);

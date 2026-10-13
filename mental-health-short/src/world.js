@@ -3,7 +3,7 @@ import {
   clamp, mix, smooth, seg, hash, vnoise, hexMix, add, sub, mul, lerp2, rot, dir, norm, perp, len, dist,
   ellipsePts, smoothClosed, smoothOpen, polySlice, spring, wobble, TAU, easeOutBack,
 } from './util.js';
-import { INK, C, shape, line, lines, dot, washes, off, seedEl } from './ink.js';
+import { INK, C, shape, line, lines, dot, washes, fills, off, seedEl, XS } from './ink.js';
 
 export const GROUND_Y = 1440;
 export const SEAT_Y = 1328;
@@ -21,7 +21,7 @@ export const PAL = {
   puddle: '#8fa3b7', puddleWarm: '#e9c98e',
   rain: '#53667f',
   cloudDark: '#45495a', cloudLight: '#f1efe9',
-  sun: '#f3c14e', sunDeep: '#ea9a33', sunGlow: '#f9dfa0',
+  sun: '#f3c14e', sunDeep: '#ea9a33', sunGlow: '#fbcf8a',
   leafSad: '#6f7d70', leafWarm: '#5f9443', leafSad2: '#8e9a8b', leafWarm2: '#8fbf5e',
   bark: '#6f5a4a', barkDark: '#4d3e33',
   stem: '#5f8a4a', leaf: '#7fa95e',
@@ -51,7 +51,8 @@ export function drawSet(st) {
   for (let i = 0; i < bands; i++) {
     const a = i / bands;
     brush.wash(hexMix(top, low, smooth(clamp((a - 0.22) / 0.68))), 255);
-    brush.rect(-700, mix(y0, y1, a) - 1, 2500, (y1 - y0) / bands + 2);
+    const ya = mix(y0, y1, a) - 1, yb = ya + (y1 - y0) / bands + 2;
+    brush.polygon(XS([[-700, ya], [1800, ya], [1800, yb], [-700, yb]]));
   }
   off();
   // soft far clouds: lobed doodle puffs
@@ -246,18 +247,12 @@ export function drawTree(t, warm, ws, sway, blossom) {
   const back = [], front = [];
   CLUSTERS.forEach((c, i) => (c[4] ? front : back).push([blob(c, i), i]));
   washes('tree-back', back.map(([b]) => smoothClosed(b, 3)), leafBack, 252);
-  off();
-  brush.fill(hexMix(leafBack, '#1f2a1c', 0.35), 120); brush.fillBleed(0.08); brush.fillTexture(0.7, 0.5);
-  back.forEach(([b], i) => { seedEl('tree-bf', i); brush.polygon(smoothClosed(b, 3)); });
-  off();
+  fills('tree-bf', back.map(([b]) => smoothClosed(b, 3)), hexMix(leafBack, '#1f2a1c', 0.35), 120, 0.08, 0.7, 0.5);
   washes('tree-limbs', limbs, bark, 252);
   lines('tree-limbs-ol', limbs.map((l) => l.concat([l[0]])), { brush: '2B', c: C.ink, w: 0.8, curv: 0.4 });
   // front canopy
   washes('tree-front', front.map(([b]) => smoothClosed(b, 3)), leafFront, 252);
-  off();
-  brush.fill(hexMix(leafFront, '#ffffff', 0.15), 110); brush.fillBleed(0.08); brush.fillTexture(0.65, 0.55);
-  front.forEach(([b], i) => { seedEl('tree-ff', i); brush.polygon(smoothClosed(b, 3)); });
-  off();
+  fills('tree-ff', front.map(([b]) => smoothClosed(b, 3)), hexMix(leafFront, '#ffffff', 0.15), 110, 0.08, 0.65, 0.55);
   // scalloped doodle outlines, all lobes batched
   const outl = back.concat(front).map(([b]) => {
     const sm = smoothClosed(b, 3);
@@ -586,7 +581,8 @@ export function drawButterfly(t, p, flapT) {
   const w = mix(0.25, 1, flap);
   const wingsUp = [[0, 0], [-6 * w, -16], [-20 * w, -18], [-18 * w, -4], [-4 * w, 2]];
   const wingsLo = [[0, 2], [-12 * w, 6], [-14 * w, 14], [-4 * w, 10]];
-  const m = (pts, sx) => pts.map(([x, y]) => [p[0] + x * sx, p[1] + y]);
+  const k = 1.7;
+  const m = (pts, sx) => pts.map(([x, y]) => [p[0] + x * sx * k, p[1] + y * k]);
   const polys = [m(wingsUp, 1), m(wingsUp, -1), m(wingsLo, 1), m(wingsLo, -1)];
   washes('bfly', polys.map((q) => smoothClosed(q, 3)), PAL.coral, 245);
   lines('bfly-ol', polys.map((q) => smoothClosed(q, 3).concat([q[0]])), { brush: 'HB', c: C.ink, w: 0.6, curv: 0.6 });

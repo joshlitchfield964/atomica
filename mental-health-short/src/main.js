@@ -266,6 +266,19 @@ function drawPhoneGlow(xJ) {
   shape('X-phone', pts, { wash: '#cfe3f0', washA: 250, stroke: C.ink, w: 0.6, brush: 'HB', curv: 0.1, dense: false });
 }
 
+// Optional GPU profiler (?profile): forces the GPU to finish after each section.
+const PROFILE = params.has('profile');
+let profT = 0;
+const PROF = (window.PROF = {});
+function mark(label) {
+  if (!PROFILE) return;
+  const gl = drawingContext, px = new Uint8Array(4);
+  gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+  const now = performance.now();
+  if (label) PROF[label] = (PROF[label] || 0) + now - profT;
+  profT = now;
+}
+
 function renderScene(fi) {
   const t = fi / FPS;
   const L = St.look(t);
@@ -273,18 +286,23 @@ function renderScene(fi) {
   const sim = SIM[fi];
   INK.T = t;
   INK.boil = Math.floor(fi / 2) % 3;
-  INK.wscale = 1 / Math.pow(z, 0.55);
+  INK.cam = { cx, cy, z };
   INK.reveal = t < 2.2 ? (id) => St.reveal(t, id) : null;
 
   background(C.paper);
-  scale(z);
-  translate(-cx, -cy);
+  for (const k in PROF) delete PROF[k];
+  mark(null);
 
   // plates
   if (plates) {
     const g = clamp((L.gloom - 0.55) / 0.45);
     const b = INK.boil;
-    const draw = (img, a) => { if (a > 0.003) { push(); tint(255, a * 255); image(img, PLATE.x0, PLATE.y0, PLATE.w, PLATE.h); pop(); } };
+    const draw = (img, a) => {
+      if (a <= 0.003) return;
+      push(); scale(z); translate(-cx, -cy); tint(255, a * 255);
+      image(img, PLATE.x0, PLATE.y0, PLATE.w, PLATE.h);
+      pop();
+    };
     draw(plates.A[b], L.plate);
     draw(plates.B[b], g * L.plate);
     draw(plates.C[b], L.warm * L.plate);
@@ -292,6 +310,7 @@ function renderScene(fi) {
     Wd.drawSet({ gloom: L.gloom, warm: L.warm });
   }
 
+  mark('plates');
   const th = St.threadState(t);
   // the sun the thread draws
   Wd.drawSun(t, th.flood, th.rays);
@@ -299,10 +318,12 @@ function renderScene(fi) {
   Wd.drawSmoke(t, L.warm);
   Wd.drawBirds(t, St.BIRDS.filter((b) => b[2] < 12));
 
+  mark('sky-props');
   // tree + leaves
   Wd.drawTree(t, L.warm, L.wind, sim.tree, seg(t, 24.2, 26.5));
   Wd.drawFallingLeaves(t, L.warm, L.wind, St.LEAVES);
 
+  mark('tree');
   // passer-by on the far path
   if (t > 1.2 && t < 5.6) {
     const xJ = solve(STRANGER, St.poseStranger(t, (x) => 1150 + 48 * Math.sin(x * 0.006 + 0.5) + 22 * Math.sin(x * 0.017) - 4));
@@ -310,11 +331,14 @@ function renderScene(fi) {
     drawPhoneGlow(xJ);
   }
 
+  mark('stranger');
   // bench, puddle, back grass
   Wd.drawBench(seg(t, 19.3, 20.6));
   Wd.drawPuddle(t, St.cloudState(t).rain, L.warm, 0.6 + 0.4 * seg(t, 1, 12));
   Wd.drawGrass(sim.grass, L.warm, false);
+  mark('bench-puddle-grass');
   drawBloom(t);
+  mark('bloom');
 
   // characters
   const sPose = St.poseSunny(t);
@@ -366,16 +390,20 @@ function renderScene(fi) {
     }
   }
 
+  mark('characters');
   // weather
   const cst = St.cloudState(t);
   const cs = Wd.cloudShape(t, { ...cst, pos: add(cst.pos, cst.bob) });
   Wd.drawCloud(t, { ...cst }, cs);
   const bolt = seg(t, 6.98, 7.3);
   if (bolt > 0 && bolt < 1) Wd.drawLightning(cs, bolt);
+  mark('cloud');
   Wd.drawRain(t, cs, cst.rain, surfaceFn(aJ, sJ, U, t));
+  mark('rain');
   if (umbrellaFront && t >= 9.5) drawUmbrella(U);
   drawThread(t, aJ);
   drawLastDrops(t);
+  mark('umbrella-thread');
 
   // foreground life
   const births = St.flowerBirths(Wd.FLOWERS, (tt) => Wd.cloudShape(tt, St.cloudState(tt)));
@@ -387,6 +415,7 @@ function renderScene(fi) {
     Wd.drawButterfly(t, p, t);
   }
   Wd.drawBirds(t, St.BIRDS.filter((b) => b[2] >= 12));
+  mark('foreground');
   return L;
 }
 
@@ -495,11 +524,9 @@ window.draw = function () {
   const job = pending;
   if (job.type === 'plate') {
     const st = PLATE_STATES[job.key];
-    INK.boil = job.boil; INK.wscale = 1 / Math.pow(PLATE.scale, 0.0); INK.reveal = null;
+    INK.boil = job.boil; INK.reveal = null;
+    INK.cam = { cx: PLATE.x0 + PLATE.w / 2, cy: PLATE.y0 + PLATE.h / 2, z: PLATE.scale };
     background(C.paper);
-    translate(-width / 2, -height / 2);
-    scale(PLATE.scale);
-    translate(-PLATE.x0, -PLATE.y0);
     Wd.drawSet(st);
   } else {
     job.look = renderScene(job.frame);
