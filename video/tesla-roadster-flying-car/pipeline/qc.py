@@ -1,7 +1,7 @@
 import subprocess, os, sys
 from PIL import Image, ImageDraw
 B="/tmp/claude-0/-home-user-atomica/e15b684b-c126-5141-91b7-b79bfd6b6ee8/scratchpad/"
-F=B+"deliver/renders/Tesla_Roadster_FILM_1080p.mp4"
+F=B+"deliver/renders/Tesla_Roadster_Documentary_1080p.mp4"
 Q=B+"qc/"
 times=[float(x) for x in sys.argv[1].split(",")] if len(sys.argv)>1 else \
       [1.5,13,25,43.5,52,66,72,85,100,112,125,140,160,183,205,218,231,255,290,305,

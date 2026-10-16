@@ -3,7 +3,7 @@
  "fps": 30,
  "resolution": "1920x1080",
  "duration_s": 700.108,
- "shot_count": 161,
+ "shot_count": 159,
  "shots": [
   {
    "shot_id": "S000",
@@ -179,11 +179,11 @@
    "narration": "Everything you're about to hear comes from the actual event footage.",
    "asset": "yt_qt5p-_tE8d0_Roadster Event.mp4",
    "kind": "video",
-   "source_in": 1282.0,
+   "source_in": 1260.0,
    "treatment": "archive",
    "motion": "no added move (clip has its own camera)",
    "transition_in": "hard cut",
-   "reason": "'actual event footage' \u2014 show the source, framed and credited."
+   "reason": "'actual event footage' \u2014 Tesla's own overhead launch shot with its on-screen timer. Bright, sustained, unambiguous."
   },
   {
    "shot_id": "S012",
@@ -1109,11 +1109,11 @@
    "narration": "2017. Musk reveals the Roadster, 0-60 in 1.9 seconds, 620 miles of range, $200,000.",
    "asset": "yt_5RRmepp7i5g_Tesla Semi & Roadster Unveil.mp4",
    "kind": "video",
-   "source_in": 1572.0,
+   "source_in": 1658.0,
    "treatment": "archive",
    "motion": "no added move (clip has its own camera)",
    "transition_in": "hard cut",
-   "reason": "the 2017 reveal itself, framed as archive (360p source)."
+   "reason": "the 2017 reveal itself: the red prototype under the lights. (1572 was 86s early and rendered black.)"
   },
   {
    "shot_id": "S074",
@@ -1122,13 +1122,13 @@
    "t_out": 239.62,
    "duration": 5.62,
    "narration": "",
-   "asset": "reveal_2017_prototype_grey_commons.jpg",
-   "kind": "still",
-   "source_in": null,
-   "treatment": "full",
-   "motion": "lateral drift 1.05\u21921.05, eased both ends",
+   "asset": "yt_5RRmepp7i5g_Tesla Semi & Roadster Unveil.mp4",
+   "kind": "video",
+   "source_in": 1757.0,
+   "treatment": "archive",
+   "motion": "no added move (clip has its own camera)",
    "transition_in": "hard cut",
-   "reason": "specs beat: 1.9s / 620 mi / $200k over the prototype."
+   "reason": "Tesla's own 2017 slide reading '1.9 sec 0-60' lands exactly on the spoken claim. Their evidence, not ours."
   },
   {
    "shot_id": "S075",
@@ -1154,11 +1154,11 @@
    "narration": "Production promised for 2020. What did those people get?",
    "asset": "yt_5RRmepp7i5g_Tesla Semi & Roadster Unveil.mp4",
    "kind": "video",
-   "source_in": 1596.0,
+   "source_in": 1690.0,
    "treatment": "archive",
    "motion": "no added move (clip has its own camera)",
    "transition_in": "hard cut",
-   "reason": "'production promised for 2020' from the stage."
+   "reason": "'production promised for 2020' \u2014 the prototype, doors up, on the 2017 stage."
   },
   {
    "shot_id": "S077",
@@ -1179,139 +1179,124 @@
    "shot_id": "S078",
    "act": "A4",
    "t_in": 249.26,
-   "t_out": 301.38,
-   "duration": 52.12,
-   "narration": "2018, Musk tweets the SpaceX package. 10 rocket thrusters around the car. 2019, someone posts an animation of a flying DeLorean. Musk replies. the roadster will actually do something like this. Then silence. 2020 comes and goes. 2021, 2022.",
+   "t_out": 252.84,
+   "duration": 3.58,
+   "narration": "2018, Musk tweets the SpaceX package.",
+   "asset": "event_levitating_thrusters_motortrend.jpg",
+   "kind": "still",
+   "source_in": null,
+   "treatment": "full",
+   "motion": "push-in 1.00\u21921.06, eased both ends",
+   "transition_in": "hard cut",
+   "reason": "'2018, Musk tweets the SpaceX package' \u2014 the thrusters he promised."
+  },
+  {
+   "shot_id": "S079",
+   "act": "A4",
+   "t_in": 252.84,
+   "t_out": 255.82,
+   "duration": 2.98,
+   "narration": "10 rocket thrusters around the car. 2019, someone posts an animation of a flying DeLorean.",
+   "asset": "car_spoiler_fan_detail_teslarati.jpg",
+   "kind": "still",
+   "source_in": null,
+   "treatment": "full",
+   "motion": "lateral drift 1.05\u21921.05, eased both ends",
+   "transition_in": "hard cut",
+   "reason": "'10 rocket thrusters around the car' \u2014 hardware, lateral drift."
+  },
+  {
+   "shot_id": "S080",
+   "act": "A4",
+   "t_in": 255.82,
+   "t_out": 260.62,
+   "duration": 4.8,
+   "narration": "2019, someone posts an animation of a flying DeLorean. Musk replies.",
+   "asset": "reveal_2017_prototype_grey_commons.jpg",
+   "kind": "still",
+   "source_in": null,
+   "treatment": "full",
+   "motion": "push-in 1.00\u21921.05, eased both ends",
+   "transition_in": "hard cut",
+   "reason": "'2019, an animation of a flying DeLorean' \u2014 the prototype that still did not fly."
+  },
+  {
+   "shot_id": "S081",
+   "act": "A4",
+   "t_in": 260.62,
+   "t_out": 261.96,
+   "duration": 1.34,
+   "narration": "Musk replies.",
+   "asset": "stage_musk_holzhausen_motortrend.jpg",
+   "kind": "still",
+   "source_in": null,
+   "treatment": "full",
+   "motion": "push-in 1.00\u21921.05, eased both ends",
+   "transition_in": "hard cut",
+   "reason": "'Musk replies' \u2014 the man making the promise."
+  },
+  {
+   "shot_id": "S082",
+   "act": "A4",
+   "t_in": 261.96,
+   "t_out": 265.19,
+   "duration": 3.23,
+   "narration": "the roadster will actually do something like this.",
+   "asset": "event_midair_over_ramp_motortrend.jpg",
+   "kind": "still",
+   "source_in": null,
+   "treatment": "full",
+   "motion": "push-in 1.00\u21921.06, eased both ends",
+   "transition_in": "hard cut",
+   "reason": "'will actually do something like this' \u2014 the thing he promised, years later."
+  },
+  {
+   "shot_id": "S083",
+   "act": "A4",
+   "t_in": 265.19,
+   "t_out": 267.11,
+   "duration": 1.92,
+   "narration": "Then silence.",
+   "asset": "ramp_structure_night_motortrend.jpg",
+   "kind": "still",
+   "source_in": null,
+   "treatment": "full",
+   "motion": "pull-out 1.05\u21921.00, eased both ends",
+   "transition_in": "hard cut",
+   "reason": "'then silence' \u2014 the empty ramp, pulling away. Music drops out."
+  },
+  {
+   "shot_id": "S084",
+   "act": "A4",
+   "t_in": 267.11,
+   "t_out": 318.92,
+   "duration": 51.81,
+   "narration": "2020 comes and goes. 2021, 2022. 2023, every date slips. Musk says the design goals have been radically increased. doesn't happen. November 2025. He finally sets a demo date. April 1st, 2026. And he jokes that the date gives him deniability",
    "asset": "g04.mp4",
    "kind": "gfx",
    "source_in": 0.0,
    "treatment": "full",
    "motion": "graphic \u2014 internal animation",
    "transition_in": "hard cut",
-   "reason": "the slipped-date rail opens and runs the whole 2018-2026 sequence."
-  },
-  {
-   "shot_id": "S079",
-   "act": "A4",
-   "t_in": 301.38,
-   "t_out": 303.78,
-   "duration": 2.4,
-   "narration": "than August. Nothing.",
-   "asset": "event_ramp_launch_night_motortrend.jpg",
-   "kind": "still",
-   "source_in": null,
-   "treatment": "full",
-   "motion": "push-in 1.00\u21921.05, eased both ends",
-   "transition_in": "hard cut",
-   "reason": "'then August. Nothing.' \u2014 the empty ramp as the no-show."
-  },
-  {
-   "shot_id": "S080",
-   "act": "A4",
-   "t_in": 303.78,
-   "t_out": 306.4,
-   "duration": 2.62,
-   "narration": "September 12th, go for launch. October 1st, postponed. Wind.",
-   "asset": "event_site_aerial_night_motortrend.jpg",
-   "kind": "still",
-   "source_in": null,
-   "treatment": "full",
-   "motion": "push-in 1.01\u21921.06, eased both ends",
-   "transition_in": "hard cut",
-   "reason": "'September 12th, go for launch'."
-  },
-  {
-   "shot_id": "S081",
-   "act": "A4",
-   "t_in": 306.4,
-   "t_out": 309.38,
-   "duration": 2.98,
-   "narration": "",
-   "asset": "ramp_structure_night_motortrend.jpg",
-   "kind": "still",
-   "source_in": null,
-   "treatment": "full",
-   "motion": "pull-out 1.06\u21921.00, eased both ends",
-   "transition_in": "hard cut",
-   "reason": "'October 1st, postponed. Wind.' \u2014 the ramp, unused."
-  },
-  {
-   "shot_id": "S082",
-   "act": "A4",
-   "t_in": 309.38,
-   "t_out": 312.74,
-   "duration": 3.36,
-   "narration": "October 15th, it finally happens.",
-   "asset": "x_2110915963399135731_teslarati_reaction_2160p.mp4",
-   "kind": "video",
-   "source_in": 0.8,
-   "treatment": "full",
-   "motion": "no added move (clip has its own camera)",
-   "transition_in": "hard cut",
-   "reason": "'October 15th, it finally happens' \u2014 the car arrives at the ramp."
-  },
-  {
-   "shot_id": "S083",
-   "act": "A4",
-   "t_in": 312.74,
-   "t_out": 316.0,
-   "duration": 3.26,
-   "narration": "9 years, 8 slipped dates, 1 car that left the ground for a few seconds,",
-   "asset": "x_2110904206122983917_shacknews_kickflip_1080p.mp4",
-   "kind": "video",
-   "source_in": 27.5,
-   "treatment": "full",
-   "motion": "no added move (clip has its own camera)",
-   "transition_in": "hard cut",
-   "reason": "'1 car that left the ground for a few seconds' \u2014 the few seconds themselves."
-  },
-  {
-   "shot_id": "S084",
-   "act": "A4",
-   "t_in": 316.0,
-   "t_out": 318.92,
-   "duration": 2.92,
-   "narration": "",
-   "asset": "event_midair_flip_motortrend.jpg",
-   "kind": "still",
-   "source_in": null,
-   "treatment": "full",
-   "motion": "push-in 1.00\u21921.06, eased both ends",
-   "transition_in": "hard cut",
-   "reason": "hold the airborne frame into the smash cut."
+   "reason": "the slipped-date rail. Its internal beats are cut to the VO from 2020 to the 9/8/1 tally."
   },
   {
    "shot_id": "S085",
    "act": "A5",
    "t_in": 318.92,
-   "t_out": 321.0,
-   "duration": 2.08,
-   "narration": "Here's what actually got announced.",
-   "asset": "car_side_profile_doors_up_motortrend.jpg",
-   "kind": "still",
-   "source_in": null,
-   "treatment": "full",
-   "motion": "push-in 1.00\u21921.05, eased both ends",
-   "transition_in": "hard cut",
-   "reason": "'here's what actually got announced' \u2014 product framing, showroom light."
-  },
-  {
-   "shot_id": "S086",
-   "act": "A5",
-   "t_in": 321.0,
    "t_out": 352.3,
-   "duration": 31.3,
-   "narration": "3 trims. Performance, two seats, under 1.6 seconds, suction system only. Tesla calls it \"road ready.\" Thrust 2 seats under 0.9 seconds. Rear thrusters added. Race Ready! Rocket One seat under 0.59 seconds. 10 perimeter thrusters. Air ready.",
+   "duration": 33.38,
+   "narration": "Here's what actually got announced. 3 trims. Performance, two seats, under 1.6 seconds, suction system only. Tesla calls it \"road ready.\" Thrust 2 seats under 0.9 seconds. Rear thrusters added. Race Ready! Rocket One seat under 0.59 seconds",
    "asset": "g05.mp4",
    "kind": "gfx",
    "source_in": 0.0,
    "treatment": "full",
    "motion": "graphic \u2014 internal animation",
    "transition_in": "hard cut",
-   "reason": "the trim ladder builds across all three trims as they are named."
+   "reason": "the trim ladder: each card lands on its trim name (322.47 / 330.70 / 337.58)."
   },
   {
-   "shot_id": "S087",
+   "shot_id": "S086",
    "act": "A5",
    "t_in": 352.3,
    "t_out": 354.09,
@@ -1326,7 +1311,7 @@
    "reason": "'one seat' made physical \u2014 the interior, single occupant."
   },
   {
-   "shot_id": "S088",
+   "shot_id": "S087",
    "act": "A5",
    "t_in": 354.09,
    "t_out": 359.98,
@@ -1341,7 +1326,7 @@
    "reason": "'Tesla's flying car' headline framing, pulled back."
   },
   {
-   "shot_id": "S089",
+   "shot_id": "S088",
    "act": "A5",
    "t_in": 359.98,
    "t_out": 364.26,
@@ -1356,7 +1341,7 @@
    "reason": "'those 2017 deposit holders' \u2014 back to what they bought."
   },
   {
-   "shot_id": "S090",
+   "shot_id": "S089",
    "act": "A5",
    "t_in": 364.26,
    "t_out": 370.18,
@@ -1371,7 +1356,7 @@
    "reason": "reservations reopen: the product interior, as a sales object."
   },
   {
-   "shot_id": "S091",
+   "shot_id": "S090",
    "act": "A5",
    "t_in": 370.18,
    "t_out": 373.16,
@@ -1386,7 +1371,7 @@
    "reason": "'the one that flies?' \u2014 single seat again, now loaded."
   },
   {
-   "shot_id": "S092",
+   "shot_id": "S091",
    "act": "A5",
    "t_in": 373.16,
    "t_out": 374.79,
@@ -1401,7 +1386,7 @@
    "reason": "'you get invited' \u2014 the gatekeeper on screen."
   },
   {
-   "shot_id": "S093",
+   "shot_id": "S092",
    "act": "A5",
    "t_in": 374.79,
    "t_out": 379.91,
@@ -1416,7 +1401,7 @@
    "reason": "'9 years of waiting' over the thing that finally flew."
   },
   {
-   "shot_id": "S094",
+   "shot_id": "S093",
    "act": "A6",
    "t_in": 379.91,
    "t_out": 383.72,
@@ -1431,7 +1416,7 @@
    "reason": "'let's talk about 0.81 seconds' \u2014 the timer frame, again."
   },
   {
-   "shot_id": "S095",
+   "shot_id": "S094",
    "act": "A6",
    "t_in": 383.72,
    "t_out": 387.53,
@@ -1446,7 +1431,7 @@
    "reason": "Tesla's own telemetry HUD: the instrument that produced the number."
   },
   {
-   "shot_id": "S096",
+   "shot_id": "S095",
    "act": "A6",
    "t_in": 387.53,
    "t_out": 390.82,
@@ -1461,7 +1446,7 @@
    "reason": "'I believe the car is absurdly fast' \u2014 give the claim its due."
   },
   {
-   "shot_id": "S097",
+   "shot_id": "S096",
    "act": "A6",
    "t_in": 390.82,
    "t_out": 396.42,
@@ -1476,7 +1461,7 @@
    "reason": "genuine violence of the launch, honestly shown."
   },
   {
-   "shot_id": "S098",
+   "shot_id": "S097",
    "act": "A6",
    "t_in": 396.42,
    "t_out": 401.79,
@@ -1491,7 +1476,7 @@
    "reason": "'the least honest number' \u2014 push into the readout itself."
   },
   {
-   "shot_id": "S099",
+   "shot_id": "S098",
    "act": "A6",
    "t_in": 401.79,
    "t_out": 405.54,
@@ -1506,7 +1491,7 @@
    "reason": "'a closed rocket range' \u2014 the closedness is the point."
   },
   {
-   "shot_id": "S100",
+   "shot_id": "S099",
    "act": "A6",
    "t_in": 405.54,
    "t_out": 409.0,
@@ -1521,7 +1506,7 @@
    "reason": "'in a car with no driver' \u2014 empty cabin."
   },
   {
-   "shot_id": "S101",
+   "shot_id": "S100",
    "act": "A6",
    "t_in": 409.0,
    "t_out": 417.16,
@@ -1536,7 +1521,7 @@
    "reason": "'no independent instrument anywhere in sight' \u2014 only Tesla's own overlay."
   },
   {
-   "shot_id": "S102",
+   "shot_id": "S101",
    "act": "A6",
    "t_in": 417.16,
    "t_out": 447.98,
@@ -1551,7 +1536,7 @@
    "reason": "claimed vs verified table: Nevera, Battista, Roadster."
   },
   {
-   "shot_id": "S103",
+   "shot_id": "S102",
    "act": "A6",
    "t_in": 447.98,
    "t_out": 450.7,
@@ -1566,7 +1551,7 @@
    "reason": "'that's the rule' \u2014 close on a car that was actually measured."
   },
   {
-   "shot_id": "S104",
+   "shot_id": "S103",
    "act": "A6",
    "t_in": 450.7,
    "t_out": 453.77,
@@ -1581,7 +1566,7 @@
    "reason": "'Tesla's best framing came from their own account'."
   },
   {
-   "shot_id": "S105",
+   "shot_id": "S104",
    "act": "A6",
    "t_in": 453.77,
    "t_out": 458.79,
@@ -1596,7 +1581,7 @@
    "reason": "4-5x tire force quote over Tesla's own promo footage."
   },
   {
-   "shot_id": "S106",
+   "shot_id": "S105",
    "act": "A6",
    "t_in": 458.79,
    "t_out": 460.49,
@@ -1611,7 +1596,7 @@
    "reason": "'that's the honest pitch' \u2014 the grip system, the real product."
   },
   {
-   "shot_id": "S107",
+   "shot_id": "S106",
    "act": "A6",
    "t_in": 460.49,
    "t_out": 463.18,
@@ -1626,7 +1611,7 @@
    "reason": "'about acceleration, not flight'."
   },
   {
-   "shot_id": "S108",
+   "shot_id": "S107",
    "act": "A6",
    "t_in": 463.18,
    "t_out": 465.1,
@@ -1641,7 +1626,7 @@
    "reason": "'the flying is the marketing' over the marketing image."
   },
   {
-   "shot_id": "S109",
+   "shot_id": "S108",
    "act": "A6",
    "t_in": 465.1,
    "t_out": 467.05,
@@ -1656,7 +1641,7 @@
    "reason": "'the launch is the product' \u2014 HIT 4 lands on the airborne frame."
   },
   {
-   "shot_id": "S110",
+   "shot_id": "S109",
    "act": "A7",
    "t_in": 467.05,
    "t_out": 472.55,
@@ -1671,7 +1656,7 @@
    "reason": "bridge beat before the rivals arrive."
   },
   {
-   "shot_id": "S111",
+   "shot_id": "S110",
    "act": "A7",
    "t_in": 472.55,
    "t_out": 479.24,
@@ -1686,7 +1671,7 @@
    "reason": "Alef's car flying over the Roadster \u2014 the rival's own answer."
   },
   {
-   "shot_id": "S112",
+   "shot_id": "S111",
    "act": "A7",
    "t_in": 479.24,
    "t_out": 483.75,
@@ -1701,7 +1686,7 @@
    "reason": "'FAA-certified, hand-building customer cars' \u2014 the actual vehicle."
   },
   {
-   "shot_id": "S113",
+   "shot_id": "S112",
    "act": "A7",
    "t_in": 483.75,
    "t_out": 487.27,
@@ -1716,7 +1701,7 @@
    "reason": "'hosted a video of their car flying over the new Roadster'."
   },
   {
-   "shot_id": "S114",
+   "shot_id": "S113",
    "act": "A7",
    "t_in": 487.27,
    "t_out": 492.0,
@@ -1731,7 +1716,7 @@
    "reason": "the Dukhovny quote \u2014 hold on Alef's machine as he speaks."
   },
   {
-   "shot_id": "S115",
+   "shot_id": "S114",
    "act": "A7",
    "t_in": 492.0,
    "t_out": 496.55,
@@ -1746,7 +1731,7 @@
    "reason": "'we've been here alone for 11 years' \u2014 their flight, their claim."
   },
   {
-   "shot_id": "S116",
+   "shot_id": "S115",
    "act": "A7",
    "t_in": 496.55,
    "t_out": 500.52,
@@ -1761,7 +1746,7 @@
    "reason": "'the entire industry dynamic in one sentence'."
   },
   {
-   "shot_id": "S117",
+   "shot_id": "S116",
    "act": "A7",
    "t_in": 500.52,
    "t_out": 502.31,
@@ -1776,7 +1761,7 @@
    "reason": "'he's not alone out there' \u2014 next rival."
   },
   {
-   "shot_id": "S118",
+   "shot_id": "S117",
    "act": "A7",
    "t_in": 502.31,
    "t_out": 508.49,
@@ -1791,7 +1776,7 @@
    "reason": "XPeng: 7,000 pre-orders, deliveries this year."
   },
   {
-   "shot_id": "S119",
+   "shot_id": "S118",
    "act": "A7",
    "t_in": 508.49,
    "t_out": 514.06,
@@ -1806,7 +1791,7 @@
    "reason": "Joby: passengers in electric aircraft this year."
   },
   {
-   "shot_id": "S120",
+   "shot_id": "S119",
    "act": "A7",
    "t_in": 514.06,
    "t_out": 517.67,
@@ -1821,7 +1806,7 @@
    "reason": "Lilium named \u2014 the aircraft that existed."
   },
   {
-   "shot_id": "S121",
+   "shot_id": "S120",
    "act": "A7",
    "t_in": 517.67,
    "t_out": 520.9,
@@ -1836,7 +1821,7 @@
    "reason": "'$3.3 billion valuation' \u2014 pull out as the number is said."
   },
   {
-   "shot_id": "S122",
+   "shot_id": "S121",
    "act": "A7",
    "t_in": 520.9,
    "t_out": 525.26,
@@ -1851,7 +1836,7 @@
    "reason": "'is dead' \u2014 hold still, no music. Stated, not mocked."
   },
   {
-   "shot_id": "S123",
+   "shot_id": "S122",
    "act": "A7",
    "t_in": 525.26,
    "t_out": 530.76,
@@ -1866,7 +1851,7 @@
    "reason": "'Alef and XPeng sell travel' \u2014 back to the ones that go somewhere."
   },
   {
-   "shot_id": "S124",
+   "shot_id": "S123",
    "act": "A7",
    "t_in": 530.76,
    "t_out": 532.74,
@@ -1881,7 +1866,7 @@
    "reason": "'Joby sells rides'."
   },
   {
-   "shot_id": "S125",
+   "shot_id": "S124",
    "act": "A7",
    "t_in": 532.74,
    "t_out": 534.76,
@@ -1896,7 +1881,7 @@
    "reason": "'Tesla sells spectacle' \u2014 the spectacle image itself."
   },
   {
-   "shot_id": "S126",
+   "shot_id": "S125",
    "act": "A7",
    "t_in": 534.76,
    "t_out": 539.24,
@@ -1911,7 +1896,7 @@
    "reason": "'the only flying car here that can't go anywhere'."
   },
   {
-   "shot_id": "S127",
+   "shot_id": "S126",
    "act": "A7",
    "t_in": 539.24,
    "t_out": 541.9,
@@ -1926,7 +1911,7 @@
    "reason": "'the honest differentiator' \u2014 land on the image it describes."
   },
   {
-   "shot_id": "S128",
+   "shot_id": "S127",
    "act": "A8",
    "t_in": 541.9,
    "t_out": 545.83,
@@ -1941,7 +1926,7 @@
    "reason": "'the detail Tesla hopes you don't think about' \u2014 the plumes return."
   },
   {
-   "shot_id": "S129",
+   "shot_id": "S128",
    "act": "A8",
    "t_in": 545.83,
    "t_out": 571.49,
@@ -1956,7 +1941,7 @@
    "reason": "the air-tank drain. The film's clock, paid off in real time."
   },
   {
-   "shot_id": "S130",
+   "shot_id": "S129",
    "act": "A8",
    "t_in": 571.49,
    "t_out": 575.0,
@@ -1971,7 +1956,7 @@
    "reason": "after the tank empties: the car, inert, inverted."
   },
   {
-   "shot_id": "S131",
+   "shot_id": "S130",
    "act": "A8",
    "t_in": 575.0,
    "t_out": 578.0,
@@ -1986,7 +1971,7 @@
    "reason": "'it does not travel' \u2014 airborne but going nowhere."
   },
   {
-   "shot_id": "S132",
+   "shot_id": "S131",
    "act": "A8",
    "t_in": 578.0,
    "t_out": 582.22,
@@ -2001,7 +1986,7 @@
    "reason": "the refill question: the ground equipment nobody asked about."
   },
   {
-   "shot_id": "S133",
+   "shot_id": "S132",
    "act": "A8",
    "t_in": 582.22,
    "t_out": 583.3,
@@ -2016,7 +2001,7 @@
    "reason": "'how many hops per hour? Unknown.'"
   },
   {
-   "shot_id": "S134",
+   "shot_id": "S133",
    "act": "A8",
    "t_in": 583.3,
    "t_out": 588.65,
@@ -2031,7 +2016,7 @@
    "reason": "'the questions Musk dodged' \u2014 put him back on screen."
   },
   {
-   "shot_id": "S135",
+   "shot_id": "S134",
    "act": "A8",
    "t_in": 588.65,
    "t_out": 593.74,
@@ -2046,7 +2031,7 @@
    "reason": "'yeah, depends on your street' \u2014 his actual answer, from the stream."
   },
   {
-   "shot_id": "S136",
+   "shot_id": "S135",
    "act": "A8",
    "t_in": 593.74,
    "t_out": 597.45,
@@ -2061,7 +2046,7 @@
    "reason": "'that's the whole answer' \u2014 the car, unexplained."
   },
   {
-   "shot_id": "S137",
+   "shot_id": "S136",
    "act": "A8",
    "t_in": 597.45,
    "t_out": 602.95,
@@ -2076,7 +2061,7 @@
    "reason": "no price, no FAA certificate \u2014 interior as the undelivered product."
   },
   {
-   "shot_id": "S138",
+   "shot_id": "S137",
    "act": "A8",
    "t_in": 602.95,
    "t_out": 607.75,
@@ -2091,7 +2076,7 @@
    "reason": "'not approved for public road use' \u2014 a car that cannot use a road."
   },
   {
-   "shot_id": "S139",
+   "shot_id": "S138",
    "act": "A8",
    "t_in": 607.75,
    "t_out": 613.0,
@@ -2106,7 +2091,7 @@
    "reason": "'the thrusters were deafening' \u2014 the loudest footage in the pack."
   },
   {
-   "shot_id": "S140",
+   "shot_id": "S139",
    "act": "A8",
    "t_in": 613.0,
    "t_out": 617.0,
@@ -2121,7 +2106,7 @@
    "reason": "'10 rocket nozzles going off in traffic'."
   },
   {
-   "shot_id": "S141",
+   "shot_id": "S140",
    "act": "A8",
    "t_in": 617.0,
    "t_out": 621.0,
@@ -2136,7 +2121,7 @@
    "reason": "'no regulator on earth is approving that' \u2014 pull out to the closed site."
   },
   {
-   "shot_id": "S142",
+   "shot_id": "S141",
    "act": "A8",
    "t_in": 621.0,
    "t_out": 624.46,
@@ -2151,7 +2136,7 @@
    "reason": "'a car that can fly, but may never be allowed to'. Smash to silence."
   },
   {
-   "shot_id": "S143",
+   "shot_id": "S142",
    "act": "A9",
    "t_in": 624.46,
    "t_out": 627.56,
@@ -2166,7 +2151,7 @@
    "reason": "'so, what is it, really' \u2014 return to the opening image."
   },
   {
-   "shot_id": "S144",
+   "shot_id": "S143",
    "act": "A9",
    "t_in": 627.56,
    "t_out": 631.5,
@@ -2181,7 +2166,7 @@
    "reason": "'suction-gripped' \u2014 name each part, show each part."
   },
   {
-   "shot_id": "S145",
+   "shot_id": "S144",
    "act": "A9",
    "t_in": 631.5,
    "t_out": 633.5,
@@ -2196,7 +2181,7 @@
    "reason": "'thruster-assisted'."
   },
   {
-   "shot_id": "S146",
+   "shot_id": "S145",
    "act": "A9",
    "t_in": 633.5,
    "t_out": 636.52,
@@ -2211,7 +2196,7 @@
    "reason": "'track monster wearing a flying car costume'."
   },
   {
-   "shot_id": "S147",
+   "shot_id": "S146",
    "act": "A9",
    "t_in": 636.52,
    "t_out": 640.3,
@@ -2226,7 +2211,7 @@
    "reason": "'and the costume worked' \u2014 the image that did the work."
   },
   {
-   "shot_id": "S148",
+   "shot_id": "S147",
    "act": "A9",
    "t_in": 640.3,
    "t_out": 644.78,
@@ -2241,7 +2226,7 @@
    "reason": "'best of the last human-driven cars' \u2014 his words, his face."
   },
   {
-   "shot_id": "S149",
+   "shot_id": "S148",
    "act": "A9",
    "t_in": 644.78,
    "t_out": 649.35,
@@ -2256,7 +2241,7 @@
    "reason": "'small potato situation'."
   },
   {
-   "shot_id": "S150",
+   "shot_id": "S149",
    "act": "A9",
    "t_in": 649.35,
    "t_out": 653.83,
@@ -2271,7 +2256,7 @@
    "reason": "the Snake River Canyon tease \u2014 a stunt, framed as a stunt."
   },
   {
-   "shot_id": "S151",
+   "shot_id": "S150",
    "act": "A9",
    "t_in": 653.83,
    "t_out": 658.09,
@@ -2286,7 +2271,7 @@
    "reason": "'read between those lines'."
   },
   {
-   "shot_id": "S152",
+   "shot_id": "S151",
    "act": "A9",
    "t_in": 658.09,
    "t_out": 660.49,
@@ -2301,7 +2286,7 @@
    "reason": "'it's a statement' \u2014 the object as statement."
   },
   {
-   "shot_id": "S153",
+   "shot_id": "S152",
    "act": "A9",
    "t_in": 660.49,
    "t_out": 663.98,
@@ -2316,7 +2301,7 @@
    "reason": "'the world's most spectacular science project'."
   },
   {
-   "shot_id": "S154",
+   "shot_id": "S153",
    "act": "A9",
    "t_in": 663.98,
    "t_out": 667.5,
@@ -2331,7 +2316,7 @@
    "reason": "'but here's the twist' \u2014 after a full second of silence."
   },
   {
-   "shot_id": "S155",
+   "shot_id": "S154",
    "act": "A9",
    "t_in": 667.5,
    "t_out": 671.69,
@@ -2346,7 +2331,7 @@
    "reason": "'the same thrusters that make it fly'."
   },
   {
-   "shot_id": "S156",
+   "shot_id": "S155",
    "act": "A9",
    "t_in": 671.69,
    "t_out": 675.56,
@@ -2361,7 +2346,7 @@
    "reason": "'the noise, the back blast, the certification wall'."
   },
   {
-   "shot_id": "S157",
+   "shot_id": "S156",
    "act": "A9",
    "t_in": 675.56,
    "t_out": 680.84,
@@ -2376,41 +2361,26 @@
    "reason": "'the physics that makes the demo possible'."
   },
   {
-   "shot_id": "S158",
+   "shot_id": "S157",
    "act": "A9",
    "t_in": 680.84,
-   "t_out": 682.75,
-   "duration": 1.91,
-   "narration": "Tesla didn't build a flying car.",
-   "asset": "car_rear_at_ramp_base_motortrend.jpg",
-   "kind": "still",
-   "source_in": null,
-   "treatment": "full",
-   "motion": "push-in 1.00\u21921.05, eased both ends",
-   "transition_in": "hard cut",
-   "reason": "'keeps it off your street' \u2014 the car, parked, going nowhere."
-  },
-  {
-   "shot_id": "S159",
-   "act": "A9",
-   "t_in": 682.75,
-   "t_out": 693.75,
+   "t_out": 691.84,
    "duration": 11.0,
-   "narration": "They built a rocket you can park. And honestly? That's way more interesting. If you want the next one, the full breakdown of what it would actually take to make this thing street legal, and why nobody's close.",
+   "narration": "Tesla didn't build a flying car. They built a rocket you can park. And honestly? That's way more interesting. If you want the next one, the full breakdown of what it would actually take to make this thing street legal, and why nobody's clos",
    "asset": "g09.mp4",
    "kind": "gfx",
    "source_in": 0.0,
    "treatment": "full",
    "motion": "graphic \u2014 internal animation",
    "transition_in": "hard cut",
-   "reason": "the verdict card. HIT 6 on 'a rocket you can park'."
+   "reason": "the verdict card: the strike lands on 'didn't', the payoff on 683.72."
   },
   {
-   "shot_id": "S160",
+   "shot_id": "S158",
    "act": "A10",
-   "t_in": 693.75,
+   "t_in": 691.84,
    "t_out": 700.11,
-   "duration": 6.36,
+   "duration": 8.27,
    "narration": "That's the video I'm making next. See you there.",
    "asset": "event_hero_flyoff_ramp_motortrend.png",
    "kind": "still",

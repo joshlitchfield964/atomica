@@ -33,7 +33,7 @@
 </style>
 </head>
 <body>
-<div id="g06" data-composition-id="g06" data-width="1920" data-height="1080" data-fps="30" data-duration="30">
+<div id="g06" data-composition-id="g06" data-width="1920" data-height="1080" data-fps="30" data-duration="31.5">
   <div class="stage"><div class="safe">
     <div class="hd m-lbl">0–60 mph · production hypercars</div>
     <div class="sub d-md">Claimed against verified.</div>
@@ -100,10 +100,11 @@
       .fromTo(b,{scaleX:0},{scaleX:frac,duration:.85,ease:"power3.out"},at+.18);
   }
   // normalise against the SLOWEST (1.79) so no bar overflows and clips
-  row("#g06-r1","#g06-b1",1.2,1.74/1.79);      // 1.74s verified
-  row("#g06-r2","#g06-b2",3.9,1.00);           // 1.79s verified
-  row("#g06-r3","#g06-b3",8.6,0.59/1.79);      // 0.59s claimed
-  tl.fromTo("#g06-rule",{opacity:0,y:18},{opacity:1,y:0,duration:.55,ease:"power3.out"},16.2);
+  // local t = VO - 417.16, so each row lands on the car as it is named
+  row("#g06-r1","#g06-b1", 1.63,1.74/1.79);    // 418.79 "the Rimac Nevera does 1.74 seconds"
+  row("#g06-r2","#g06-b2",10.56,1.00);         // 427.72 "Pininfarina Battista 1.79"
+  row("#g06-r3","#g06-b3",16.22,0.59/1.79);    // 433.38 "the rocket trim's sub-0.59 claim"
+  tl.fromTo("#g06-rule",{opacity:0,y:18},{opacity:1,y:0,duration:.55,ease:"power3.out"},26.78);
   window.__timelines["g06"]=tl;
 })();
 </script>
