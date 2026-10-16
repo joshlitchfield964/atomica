@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>G08 — 250 kg of air</title>
+<link rel="stylesheet" href="../assets/css/system.css">
+<script src="../vendor/gsap.min.js"></script>
+<style>
+  /* G08 layout: capacity bar is the hero; equation and stamps sit around it. */
+  #g08 .hd{position:absolute;left:0;top:6px}
+  #g08 .massrow{position:absolute;left:0;top:92px;display:flex;align-items:flex-end;gap:28px}
+  #g08 .mass{font-family:"JetBrains Mono";font-weight:700;font-size:150px;line-height:.86;
+    letter-spacing:-.03em;color:var(--bone);font-variant-numeric:tabular-nums}
+  #g08 .unit{font-family:"JetBrains Mono";font-weight:500;font-size:44px;color:var(--slate);
+    padding-bottom:16px}
+  #g08 .pillwrap{position:absolute;left:0;top:268px;opacity:0}
+
+  #g08 .barzone{position:absolute;left:0;right:0;top:360px}
+  #g08 .ticks{position:relative;height:16px;margin-bottom:9px}
+  #g08 .tick{position:absolute;bottom:0;width:2px;height:9px;background:var(--steel)}
+  #g08 .tick.maj{height:16px;background:var(--slate)}
+  #g08 .ticklbl{position:absolute;bottom:22px;font-family:"JetBrains Mono";font-weight:500;
+    font-size:14px;letter-spacing:.06em;color:var(--slate);transform:translateX(-50%)}
+  #g08 .track{position:relative;height:96px;border:var(--rule) solid var(--steel);
+    border-radius:2px;background:#0A0E14;overflow:hidden}
+  #g08 .fill{position:absolute;left:0;top:0;bottom:0;width:100%;background:var(--bone);
+    transform-origin:left center}
+  #g08 .fillglow{position:absolute;inset:0;background:var(--claim);opacity:0}
+  #g08 .hatch{position:absolute;inset:0;opacity:.26;
+    background:repeating-linear-gradient(135deg,transparent 0 9px,#000 9px 11px)}
+  #g08 .emptystamp{position:absolute;right:22px;top:50%;margin-top:-17px;opacity:0;
+    font-family:"JetBrains Mono";font-weight:700;font-size:30px;letter-spacing:.2em;color:var(--claim)}
+
+  #g08 .readout{position:absolute;left:0;right:0;top:498px;display:flex;justify-content:space-between;align-items:flex-start}
+  #g08 .ro{display:flex;flex-direction:column;gap:8px}
+  #g08 .ro .v{font-family:"JetBrains Mono";font-weight:700;font-size:54px;line-height:1;
+    color:var(--bone);font-variant-numeric:tabular-nums}
+  #g08 .ro.spent .v{color:var(--claim)}
+  #g08 .ro.right{align-items:flex-end}
+
+  #g08 .eq{position:absolute;left:0;top:636px;display:flex;align-items:baseline;gap:20px;opacity:0}
+  #g08 .eq .n{font-family:"JetBrains Mono";font-weight:700;font-size:46px;color:var(--bone);
+    font-variant-numeric:tabular-nums}
+  #g08 .eq .o{font-family:"JetBrains Mono";font-weight:400;font-size:38px;color:var(--slate)}
+  #g08 .eq .r{font-family:"JetBrains Mono";font-weight:700;font-size:46px;color:var(--claim)}
+  #g08 .eqpill{position:absolute;left:0;top:706px;opacity:0}
+
+  #g08 .verdict{position:absolute;left:0;right:0;top:812px;display:flex;gap:18px}
+  #g08 .vline{font-family:"Archivo";font-weight:700;font-size:62px;letter-spacing:-.025em;
+    color:var(--bone);opacity:0}
+  #g08 .vline.last{color:var(--claim)}
+  #g08 .footrule{position:absolute;left:0;right:0;bottom:0;opacity:0}
+  #g08 .footrule .fr{height:2px;background:var(--steel);width:100%}
+  #g08 .footrule .frow{display:flex;justify-content:space-between;padding-top:12px}
+  #g08 .snm{position:absolute;right:0;top:636px;text-align:right;opacity:0}
+  #g08 .snm .a{font-family:"Archivo";font-weight:700;font-size:52px;letter-spacing:-.025em;color:var(--claim)}
+</style>
+</head>
+<body>
+<div id="g08" data-composition-id="g08" data-width="1920" data-height="1080" data-fps="30" data-duration="26">
+  <div class="stage">
+    <div class="safe">
+      <div class="hd m-lbl" id="g08-hd">Compressed air · total onboard mass</div>
+
+      <div class="massrow">
+        <div class="mass" id="g08-mass">250</div>
+        <div class="unit">kg</div>
+      </div>
+      <div class="pillwrap" id="g08-pill">
+        <span class="pill claim"><span class="dot"></span>Claimed · Tesla</span>
+      </div>
+
+      <div class="barzone">
+        <div class="ticks" id="g08-ticks"></div>
+        <div class="track">
+          <div class="fill" id="g08-fill"><div class="hatch"></div><div class="fillglow" id="g08-glow"></div></div>
+          <div class="emptystamp" id="g08-empty">EMPTY</div>
+        </div>
+      </div>
+
+      <div class="readout">
+        <div class="ro">
+          <div class="v" id="g08-remain">250.0</div>
+          <div class="m-lbl">kg remaining</div>
+        </div>
+        <div class="ro spent" style="align-items:center">
+          <div class="v" id="g08-elapsed">0.00</div>
+          <div class="m-lbl">seconds at full thrust</div>
+        </div>
+        <div class="ro right">
+          <div class="v" id="g08-rate">—</div>
+          <div class="m-lbl">kg per second</div>
+        </div>
+      </div>
+
+      <div class="eq" id="g08-eq">
+        <span class="n">250 kg</span><span class="o">÷</span><span class="n">27 kg/s</span>
+        <span class="o">=</span><span class="r">9.3 s</span>
+      </div>
+      <div class="eqpill" id="g08-eqpill">
+        <span class="pill" style="color:var(--slate);border-style:dashed">Burn rate · public estimate · not Tesla-confirmed</span>
+      </div>
+
+      <div class="snm" id="g08-snm"><div class="a">Seconds — not minutes.</div></div>
+
+      <div class="footrule" id="g08-foot">
+        <div class="fr"></div>
+        <div class="frow">
+          <span class="m-sm">Source · Tesla event stream, 15 Oct 2026 · burn rate: public estimate</span>
+          <span class="m-sm">Fig. 08 — onboard air budget</span>
+        </div>
+      </div>
+
+      <div class="verdict">
+        <div class="vline" id="g08-v1">It hops.</div>
+        <div class="vline" id="g08-v2">It flips.</div>
+        <div class="vline last" id="g08-v3">It does not travel.</div>
+      </div>
+    </div>
+    <div class="vig"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ticks every 25 kg across 250 kg
+  var tk=document.getElementById("g08-ticks");
+  for(var i=0;i<=10;i++){
+    var d=document.createElement("div");
+    d.className="tick"+(i%2===0?" maj":"");
+    d.style.left="calc("+(i*10)+"% - 1px)";
+    tk.appendChild(d);
+    if(i%2===0){
+      var l=document.createElement("div");
+      l.className="ticklbl"; l.style.left=(i*10)+"%";
+      l.textContent=(i*25); tk.appendChild(l);
+    }
+  }
+
+  var DRAIN=9.259;                  // 250 / 27
+  var tl=gsap.timeline({paused:true});
+  var st={m:250,t:0};
+
+  // 0.00  mass reveal on the spoken "250 kilograms"
+  tl.fromTo("#g08-hd",{opacity:0,y:-10},{opacity:1,y:0,duration:.45,ease:"power2.out"},0)
+    .fromTo("#g08-mass",{opacity:0,y:26},{opacity:1,y:0,duration:.55,ease:"power3.out"},.1)
+    .fromTo(".massrow .unit",{opacity:0},{opacity:1,duration:.4},.3)
+    .to("#g08-pill",{opacity:1,duration:.35,ease:"power2.out"},.62)
+    .fromTo("#g08-pill",{y:8},{y:0,duration:.35,ease:"power2.out"},.62)
+    .to("#g08-foot",{opacity:1,duration:.6,ease:"power2.out"},.9);
+
+  // 2.43  the tank itself — bar draws in full
+  tl.fromTo("#g08-fill",{scaleX:0},{scaleX:1,duration:.85,ease:"power3.inOut"},2.43)
+    .fromTo("#g08-ticks",{opacity:0},{opacity:1,duration:.5},2.60)
+    .fromTo(".readout .ro",{opacity:0,y:10},{opacity:1,y:0,duration:.45,stagger:.08,ease:"power2.out"},2.95);
+
+  // 5.35  burn rate lands
+  tl.to("#g08-rate",{duration:.01,onComplete:function(){
+      document.getElementById("g08-rate").textContent="27";}},5.35)
+    .fromTo("#g08-rate",{opacity:0,y:14},{opacity:1,y:0,duration:.45,ease:"power2.out"},5.35)
+    .to("#g08-eqpill",{opacity:1,duration:.4},5.75);
+
+  // 11.33 the drain — mechanical easing, real-time against 27 kg/s
+  tl.to(st,{m:0,t:DRAIN,duration:DRAIN,ease:"none",onUpdate:function(){
+      document.getElementById("g08-remain").textContent=st.m.toFixed(1);
+      document.getElementById("g08-elapsed").textContent=st.t.toFixed(2);
+    }},11.33)
+   .to("#g08-fill",{scaleX:0,duration:DRAIN,ease:"none"},11.33)
+   .to("#g08-glow",{opacity:.9,duration:2.2,ease:"power2.in"},11.33+DRAIN-2.2);
+
+  // 15.17 "seconds, not minutes" while the bar is visibly half gone
+  tl.fromTo("#g08-snm",{opacity:0,y:16},{opacity:1,y:0,duration:.5,ease:"power3.out"},15.17)
+    .to("#g08-eq",{opacity:1,duration:.45,ease:"power2.out"},15.17);
+
+  // 20.59 empty
+  tl.to("#g08-empty",{opacity:1,duration:.22,ease:"power2.out"},20.59)
+    .to("#g08-remain",{color:"#FF4733",duration:.3},20.59)
+  ;
+
+  // 22.02 the three-beat landing
+  tl.fromTo("#g08-v1",{opacity:0,y:18},{opacity:1,y:0,duration:.34,ease:"power3.out"},22.02)
+    .fromTo("#g08-v2",{opacity:0,y:18},{opacity:1,y:0,duration:.34,ease:"power3.out"},23.39)
+    .fromTo("#g08-v3",{opacity:0,y:18},{opacity:1,y:0,duration:.40,ease:"power3.out"},24.30);
+
+  window.__timelines["g08"]=tl;
+})();
+</script>
+</body>
+</html>

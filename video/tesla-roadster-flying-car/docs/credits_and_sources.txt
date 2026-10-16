@@ -1,0 +1,103 @@
+================================================================================
+CREDITS AND SOURCES — "They Built a Rocket You Can Park"
+Paste the ON-SCREEN CREDITS + YOUTUBE DESCRIPTION blocks into the video description.
+================================================================================
+
+--------------------------------------------------------------------------------
+YOUTUBE DESCRIPTION BLOCK  (copy from here)
+--------------------------------------------------------------------------------
+All footage and photographs are used under fair use / fair dealing for the
+purposes of news reporting, commentary, criticism and analysis. This video is a
+transformative critical examination of claims made at Tesla's 15 October 2026
+Roadster event; every clip is excerpted briefly and re-contextualised with
+original narration, original graphics and original music.
+
+FOOTAGE
+- Tesla, Inc. — official event footage and @Tesla posts (via Shacknews,
+  Teslarati, Drive Tesla, KanekoaTheGreat, Collin Rugg, Sawyer Merritt, rushlane)
+- Tesla, Inc. — official full event replay (YouTube) and 2017 Semi/Roadster
+  unveil replay (YouTube)
+- Alef Aeronautics — flight footage released via Electrek
+- Jameson Quave; Electrek — event coverage excerpts
+
+PHOTOGRAPHS
+- MotorTrend — on-site event gallery (18 photographs)
+- Tesla, Inc. — official press images (via TechCrunch)
+- Shawn Thew / EPA / Shutterstock, and Reuters (via New York Post) — wire photos
+- Teslarati — Roadster fan/spoiler detail
+- Gizmodo — Tesla livestream frame
+- Wikimedia Commons — 2017 Roadster prototype; Alef Model A; XPeng X2;
+  Joby S4; Lilium Jet; Rimac Nevera; Pininfarina Battista
+  (CC BY / CC BY-SA / CC0 / public domain — see per-file attribution below)
+
+MUSIC AND SOUND
+- Original score, ambience and sound design composed and synthesised for this
+  film. No third-party or library music is used, so there is no Content ID
+  exposure.
+
+No AI-generated footage or photographs appear in this video. Every image is a
+real photograph or real recording of the events described.
+
+--------------------------------------------------------------------------------
+ON-SCREEN CREDIT RULES (already built into the edit)
+--------------------------------------------------------------------------------
+A mono source tag appears bottom-left on first use of every archive item:
+  MotorTrend material .............. "Photograph · MotorTrend"
+  Tesla press images ............... "Photograph · Tesla"
+  Wire photos ...................... "Shawn Thew/EPA" or "Reuters"   (REQUIRED)
+  Teslarati ........................ "Photograph · Teslarati"
+  Gizmodo .......................... "Frame · Tesla via Gizmodo"
+  Event footage .................... "Footage: Tesla"
+  Shacknews-hosted clips ........... "Footage: Tesla / Shacknews"
+  Drive Tesla clips ................ "Footage: Tesla / Drive Tesla"
+  Sawyer Merritt clips ............. "@SawyerMerritt / Tesla"
+  rushlane clip .................... "@rushlane / Tesla"
+  Alef footage ..................... "Alef Aeronautics"
+  2017 replay ...................... "Tesla · 2017 unveil"
+  Commons competitor images ........ photographer name per file (below)
+
+--------------------------------------------------------------------------------
+RIGHTS STATUS — READ BEFORE MONETISING OR BROADCASTING
+--------------------------------------------------------------------------------
+GREEN  Wikimedia Commons images (2017 prototype grey; all 7 competitor images)
+       Free licences (CC BY / CC BY-SA / CC0 / PD). Attribution as listed per
+       file in the pack's IMAGE_MANIFEST.md. Safe for commercial use.
+
+AMBER  Tesla footage and Tesla press images; MotorTrend, Teslarati, Gizmodo,
+       TechCrunch material; YouTube creator excerpts.
+       Used here as short, transformative, credited excerpts for commentary.
+       This is a standard fair-use posture for a critical documentary and is
+       normally fine for an ad-supported YouTube upload, but it is a defence,
+       not a licence. Tesla's own clips may still attract a Content ID claim;
+       dispute with the commentary rationale if so.
+
+RED    Wire photographs — Shawn Thew/EPA/Shutterstock and Reuters, obtained via
+       New York Post:
+         wire_levitating_ramp_vapor_nypost.jpg
+         wire_midair_by_ramp_nypost.jpg
+         wire_event_wide_night_nypost.jpg
+         wire_ramp_structure_night_nypost.jpg
+       These are rights-managed. They are NOT used in the current cut precisely
+       to keep the film clean — every frame they could have filled is covered by
+       MotorTrend or Tesla material instead. If you ever add them, licence them
+       via Reuters Connect / EPA through Shutterstock first. Do not use them in
+       any paid, broadcast or sponsored distribution without that licence.
+
+--------------------------------------------------------------------------------
+FACT-CHECK NOTES CARRIED INTO THE EDIT
+--------------------------------------------------------------------------------
+- Every Tesla-supplied figure on screen carries a red "CLAIMED · TESLA" stamp.
+  None of them — 0.81 s, 80 kN, 250 kg of air, 2 G, <0.59 s — has been
+  independently measured. The graphics never let a Tesla number look verified.
+- The 27 kg/s burn rate is a PUBLIC ESTIMATE, not a Tesla figure. It is stamped
+  separately in slate with a dashed border and the words "not Tesla-confirmed",
+  because the film's own argument depends on not overstating it.
+- Rimac Nevera (1.74 s) and Pininfarina Battista (1.79 s) are shown as
+  independently verified, which is what makes the comparison meaningful.
+- "No FAA certificate in federal records" is presented as an absence of record,
+  never as a refusal or denial by the FAA.
+- Lilium's collapse is stated factually. No mockery; a failed company's staff
+  are not the story.
+- The narration's machine transcript misheard several proper nouns. On screen
+  the film uses the correct spellings: Rimac Nevera, Pininfarina Battista,
+  Nardò, Jim Dukhovny, Alef Aeronautics, Joby Aviation, XPeng, Evel Knievel.

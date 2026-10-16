@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>G04 — nine years, eight slipped dates</title>
+<link rel="stylesheet" href="../assets/css/system.css">
+<script src="../vendor/gsap.min.js"></script>
+<style>
+  #g04 .hd{position:absolute;left:0;top:4px}
+  #g04 .sub{position:absolute;left:0;top:34px}
+
+  /* ---- main rail: the nine years ---- */
+  #g04 .rail{position:absolute;left:0;right:0;top:250px;height:2px;background:var(--steel)}
+  #g04 .yr{position:absolute;top:-7px;width:2px;height:16px;background:var(--slate);transform:translateX(-1px)}
+  #g04 .yrl{position:absolute;top:22px;font-family:"JetBrains Mono";font-weight:500;font-size:17px;
+    letter-spacing:.06em;color:var(--slate);transform:translateX(-50%)}
+  #g04 .mk{position:absolute;bottom:10px;transform:translateX(-50%);text-align:center;opacity:0;white-space:nowrap}
+  #g04 .mk .stem{width:2px;height:26px;background:var(--steel);margin:6px auto 0}
+  #g04 .mk .lab{font-family:"JetBrains Mono";font-weight:700;font-size:21px;letter-spacing:.04em;color:var(--bone)}
+  #g04 .mk .note{font-family:"JetBrains Mono";font-weight:500;font-size:14px;letter-spacing:.05em;color:var(--slate);margin-top:3px}
+  #g04 .mk.slip .lab{color:var(--claim);text-decoration:line-through;text-decoration-thickness:3px}
+  #g04 .mk.slip .stem{background:var(--claim);opacity:.55}
+  #g04 .mk.hit .lab{color:var(--verify)}
+  #g04 .mk.hit .stem{background:var(--verify)}
+
+  /* ---- detail rail: the 2026 slips get room ---- */
+  #g04 .zoomwrap{position:absolute;left:0;right:0;top:392px;opacity:0}
+  #g04 .bracket{position:absolute;left:0;right:0;top:-130px;height:128px;overflow:visible}
+  #g04 .bracket svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  #g04 .bracket path,#g04 .bracket line{stroke:var(--steel);stroke-width:2;fill:none;stroke-dasharray:6 6}
+  #g04 .zlab{position:absolute;left:0;top:30px}
+  #g04 .drail{position:absolute;left:0;right:0;top:78px;height:2px;background:var(--steel)}
+  #g04 .dmk{position:absolute;top:10px;transform:translateX(-50%);text-align:center;opacity:0;white-space:nowrap}
+  #g04 .dmk .stem{width:2px;height:22px;background:var(--steel);margin:0 auto 7px}
+  #g04 .dmk .lab{font-family:"JetBrains Mono";font-weight:700;font-size:22px;letter-spacing:.04em;color:var(--bone)}
+  #g04 .dmk .note{font-family:"JetBrains Mono";font-weight:500;font-size:14px;letter-spacing:.05em;color:var(--slate);margin-top:4px}
+  #g04 .dmk.slip .lab{color:var(--claim);text-decoration:line-through;text-decoration-thickness:3px}
+  #g04 .dmk.slip .stem{background:var(--claim);opacity:.55}
+  #g04 .dmk.hit .lab{color:var(--verify)}
+  #g04 .dmk.hit .stem{background:var(--verify)}
+
+  #g04 .quote{position:absolute;left:0;right:420px;top:600px;opacity:0}
+  #g04 .quote .q{font-family:"Archivo";font-weight:600;font-size:40px;line-height:1.2;
+    letter-spacing:-.02em;color:var(--bone)}
+  #g04 .quote .a{margin-top:10px}
+
+  #g04 .tally{position:absolute;left:0;right:0;top:716px;display:flex;gap:92px}
+  #g04 .ti{opacity:0}
+  #g04 .ti .v{font-family:"JetBrains Mono";font-weight:700;font-size:96px;line-height:.9;
+    color:var(--bone);font-variant-numeric:tabular-nums}
+  #g04 .ti.red .v{color:var(--claim)}
+  #g04 .ti .k{font-family:"JetBrains Mono";font-weight:500;font-size:19px;letter-spacing:.07em;
+    text-transform:uppercase;color:var(--slate);margin-top:14px;max-width:300px}
+  #g04 .foot{position:absolute;left:0;right:0;bottom:0;opacity:0}
+  #g04 .foot .fr{height:2px;background:var(--steel)}
+  #g04 .foot .frow{display:flex;justify-content:space-between;padding-top:12px}
+</style>
+</head>
+<body>
+<div id="g04" data-composition-id="g04" data-width="1920" data-height="1080" data-fps="30" data-duration="52">
+  <div class="stage"><div class="safe">
+    <div class="hd m-lbl" id="g04-hd">Roadster — promised delivery dates</div>
+    <div class="sub d-md" id="g04-sub">Every date slips.</div>
+
+    <div class="rail" id="g04-rail"></div>
+
+    <div class="zoomwrap" id="g04-zoom">
+      <div class="bracket"><svg viewBox="0 0 1728 128" preserveAspectRatio="none"><line id="g04-bkl" x1="0" y1="0" x2="0" y2="128"></line><line id="g04-bkr" x1="0" y1="0" x2="1728" y2="128"></line><line id="g04-bkt" x1="0" y1="0" x2="0" y2="0"></line></svg></div>
+      <div class="zlab m-lbl">Detail — the 2026 promises, in order</div>
+      <div class="drail" id="g04-drail"></div>
+    </div>
+
+    <div class="quote" id="g04-quote">
+      <div class="q" id="g04-qt">“The design goals have been radically increased.”</div>
+      <div class="a"><span class="pill claim"><span class="dot"></span>Elon Musk · 2023</span></div>
+    </div>
+
+    <div class="tally">
+      <div class="ti" id="g04-t1"><div class="v">9</div><div class="k">Years since the first deposits</div></div>
+      <div class="ti red" id="g04-t2"><div class="v">8</div><div class="k">Slipped delivery dates</div></div>
+      <div class="ti" id="g04-t3"><div class="v">1</div><div class="k">Car that left the ground, for a few seconds</div></div>
+    </div>
+
+    <div class="foot" id="g04-foot"><div class="fr"></div><div class="frow">
+      <span class="m-sm">Source · Tesla announcements and Musk posts, 2017–2026</span>
+      <span class="m-sm">Fig. 04 — delivery timeline</span></div></div>
+  </div><div class="vig"></div></div>
+</div>
+<script>
+(function(){
+  var Y0=2017.0, Y1=2027.0;
+  function fx(y){ return (y-Y0)/(Y1-Y0)*100; }
+  var rail=document.getElementById("g04-rail");
+  for(var y=2017;y<=2026;y++){
+    var t=document.createElement("div"); t.className="yr"; t.style.left=fx(y)+"%"; rail.appendChild(t);
+    var l=document.createElement("div"); l.className="yrl"; l.style.left=fx(y)+"%"; l.textContent=y; rail.appendChild(l);
+  }
+  // main-rail markers: decimal year -> x
+  var MAIN=[
+    {y:2017.85,lab:"2017",note:"Roadster revealed · $50,000 deposits",cls:""},
+    {y:2020.0, lab:"2020",note:"production promised",cls:"slip"},
+    {y:2021.0, lab:"2021",note:"",cls:"slip"},
+    {y:2022.0, lab:"2022",note:"",cls:"slip"},
+    {y:2023.0, lab:"2023",note:"",cls:"slip"}
+  ];
+  MAIN.forEach(function(m,i){
+    var d=document.createElement("div"); d.className="mk "+m.cls; d.id="g04-m"+i;
+    d.style.left=fx(m.y)+"%";
+    d.innerHTML='<div class="lab">'+m.lab+'</div>'+(m.note?'<div class="note">'+m.note+'</div>':'')+'<div class="stem"></div>';
+    rail.appendChild(d);
+  });
+  // zoom bracket covers Nov 2025 -> Oct 2026 on the main rail
+  var zA=fx(2025.80)/100*1728, zB=fx(2026.88)/100*1728;
+  document.getElementById("g04-bkt").setAttribute("x1",zA);
+  document.getElementById("g04-bkt").setAttribute("x2",zB);
+  var L=document.getElementById("g04-bkl"); L.setAttribute("x1",zA); L.setAttribute("x2",0);
+  var R=document.getElementById("g04-bkr"); R.setAttribute("x1",zB); R.setAttribute("x2",1728);
+
+  // Even slots: these are promises in sequence, not points on a scale, so spacing is
+  // uniform. Proportional spacing collides irreparably (Sep 12 / Oct 1 / Oct 15).
+  var DET=[
+    {lab:"NOV 2025",note:"demo date set",cls:""},
+    {lab:"APR 1",note:"“I was just kidding”",cls:"slip"},
+    {lab:"“NEXT MONTH”",note:"— nothing",cls:"slip"},
+    {lab:"AUG",note:"— nothing",cls:"slip"},
+    {lab:"SEP 12",note:"go for launch",cls:""},
+    {lab:"OCT 1",note:"postponed · wind",cls:"slip"},
+    {lab:"OCT 15",note:"it happens",cls:"hit"}
+  ];
+  function dx(i){ return 6 + i*(88/(DET.length-1)); }
+  var drail=document.getElementById("g04-drail");
+  DET.forEach(function(m,i){
+    var d=document.createElement("div"); d.className="dmk "+m.cls; d.id="g04-d"+i;
+    d.style.left=dx(i)+"%";
+    d.innerHTML='<div class="stem"></div><div class="lab">'+m.lab+'</div>'+(m.note?'<div class="note">'+m.note+'</div>':'');
+    drail.appendChild(d);
+  });
+
+  var tl=gsap.timeline({paused:true});
+  tl.fromTo("#g04-hd",{opacity:0,y:-8},{opacity:1,y:0,duration:.4},0)
+    .fromTo("#g04-sub",{opacity:0,y:12},{opacity:1,y:0,duration:.5,ease:"power3.out"},.1)
+    .fromTo("#g04-rail",{scaleX:0},{scaleX:1,duration:1.0,ease:"power3.inOut",transformOrigin:"left center"},.25)
+    .fromTo(".yr,.yrl",{opacity:0},{opacity:1,duration:.5,stagger:.035},.7)
+    .to("#g04-foot",{opacity:1,duration:.5},1.0);
+
+  function pop(sel,t){ tl.fromTo(sel,{opacity:0,y:10},{opacity:1,y:0,duration:.34,ease:"power3.out"},t); }
+  // spoken beats (local t = VO - 267.11)
+  pop("#g04-m0",1.20);   // 2017 context: the deposits
+  pop("#g04-m1",0.00);   // "2020 comes and goes"
+  pop("#g04-m2",4.25);   // 2021
+  pop("#g04-m3",4.55);   // 2022
+  pop("#g04-m4",4.81);   // 2023 — "every date slips"
+
+  // the quote
+  tl.fromTo("#g04-quote",{opacity:0,y:14},{opacity:1,y:0,duration:.5,ease:"power3.out"},8.07)
+    .to("#g04-quote",{opacity:0,duration:.4},16.6);
+
+  // detail rail opens on "November 2025"
+  tl.to("#g04-zoom",{opacity:1,duration:.5,ease:"power2.out"},18.10)
+    .fromTo("#g04-drail",{scaleX:0},{scaleX:1,duration:.8,ease:"power3.inOut",transformOrigin:"left center"},18.20);
+  pop("#g04-d0",18.60);   // Nov 2025
+  pop("#g04-d1",24.51);   // April 1 2026
+  pop("#g04-d2",30.69);   // "next month"
+  pop("#g04-d3",34.27);   // August
+  pop("#g04-d4",36.67);   // Sept 12 go for launch
+  pop("#g04-d5",39.60);   // Oct 1 postponed
+  pop("#g04-d6",42.27);   // Oct 15 it happens
+
+  // tally
+  tl.to("#g04-sub",{opacity:0,duration:.3},45.2)
+    .fromTo("#g04-t1",{opacity:0,y:18},{opacity:1,y:0,duration:.42,ease:"power3.out"},45.63)
+    .fromTo("#g04-t2",{opacity:0,y:18},{opacity:1,y:0,duration:.42,ease:"power3.out"},46.75)
+    .fromTo("#g04-t3",{opacity:0,y:18},{opacity:1,y:0,duration:.42,ease:"power3.out"},48.05)
+    .to("#g04-zoom",{opacity:.35,duration:.6},45.63);
+
+  window.__timelines["g04"]=tl;
+})();
+</script>
+</body>
+</html>

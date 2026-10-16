@@ -1,0 +1,7 @@
+# media never goes in git
+renders/
+shots/
+*.mp4
+*.wav
+*.mp3
+*.zip

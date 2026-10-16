@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>G09 — a rocket you can park</title>
+<link rel="stylesheet" href="../assets/css/system.css">
+<script src="../vendor/gsap.min.js"></script>
+<style>
+  #g09 .wrap{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%)}
+  #g09 .kick{opacity:0}
+  #g09 .l1{font-family:"Archivo";font-weight:600;font-size:60px;letter-spacing:-.025em;
+    color:var(--slate);opacity:0}
+  #g09 .l2{font-family:"Archivo";font-weight:700;font-size:118px;line-height:.98;
+    letter-spacing:-.03em;color:var(--bone);opacity:0;margin-top:14px}
+  #g09 .l2 em{font-style:normal;color:var(--claim)}
+  #g09 .strike{position:absolute;left:0;height:7px;background:var(--claim);width:0;top:46px}
+  #g09 .l1wrap{position:relative;display:inline-block}
+  #g09 .tail{margin-top:46px;opacity:0;max-width:1120px}
+  #g09 .sep{width:140px;height:var(--rule);background:var(--steel);margin:40px 0 34px;opacity:0;
+    transform-origin:left center}
+  #g09 .foot{position:absolute;left:0;right:0;bottom:0;opacity:0}
+  #g09 .foot .fr{height:2px;background:var(--steel)}
+  #g09 .foot .frow{display:flex;justify-content:space-between;padding-top:12px}
+</style>
+</head>
+<body>
+<div id="g09" data-composition-id="g09" data-width="1920" data-height="1080" data-fps="30" data-duration="11">
+  <div class="stage"><div class="safe">
+    <div class="wrap">
+      <div class="l1wrap"><div class="l1" id="g09-l1">Tesla didn’t build a flying car.</div>
+        <div class="strike" id="g09-st"></div></div>
+      <div class="l2" id="g09-l2">They built a <em>rocket you can park.</em></div>
+      <div class="sep" id="g09-sep"></div>
+      <div class="tail m-body" id="g09-tail">The physics that makes the demo possible is exactly what keeps it off your street.</div>
+    </div>
+    <div class="foot" id="g09-foot"><div class="fr"></div><div class="frow">
+      <span class="m-sm">Verdict</span><span class="m-sm">Fig. 09</span></div></div>
+  </div><div class="vig"></div></div>
+</div>
+<script>
+(function(){
+  var tl=gsap.timeline({paused:true});
+  tl.fromTo("#g09-l1",{opacity:0,y:16},{opacity:1,y:0,duration:.5,ease:"power3.out"},0)
+    .to("#g09-foot",{opacity:1,duration:.5},.3)
+    .to("#g09-st",{width:"100%",duration:.42,ease:"power2.inOut"},1.30)   // strike on "didn't"
+    .fromTo("#g09-l2",{opacity:0,y:24},{opacity:1,y:0,duration:.6,ease:"power3.out"},1.86)
+    .fromTo("#g09-sep",{scaleX:0},{scaleX:1,duration:.5,ease:"power3.inOut"},3.1)
+    .fromTo("#g09-tail",{opacity:0,y:14},{opacity:1,y:0,duration:.55,ease:"power3.out"},3.4);
+  window.__timelines["g09"]=tl;
+})();
+</script>
+</body>
+</html>

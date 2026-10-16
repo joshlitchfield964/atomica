@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>G01 — main title</title>
+<link rel="stylesheet" href="../assets/css/system.css">
+<script src="../vendor/gsap.min.js"></script>
+<style>
+  #g01 .plate{position:absolute;inset:0;background:url("../assets/plate_hero.png") center/cover no-repeat;
+    opacity:0;filter:saturate(.8) contrast(1.05)}
+  #g01 .scrim{position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(7,9,13,.55) 0%,rgba(7,9,13,.82) 55%,rgba(7,9,13,.96) 100%)}
+  #g01 .mid{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%)}
+  #g01 .kick{opacity:0;margin-bottom:22px}
+  #g01 .t{font-family:"Archivo";font-weight:700;font-size:126px;line-height:.95;
+    letter-spacing:-.035em;color:var(--bone);opacity:0}
+  #g01 .t em{font-style:normal;color:var(--claim)}
+  #g01 .bar{height:var(--rule);background:var(--claim);width:160px;margin:34px 0 26px;
+    transform-origin:left center}
+  #g01 .sub{opacity:0;max-width:1020px}
+  #g01 .foot{position:absolute;left:0;right:0;bottom:0;opacity:0}
+  #g01 .foot .fr{height:2px;background:var(--steel)}
+  #g01 .foot .frow{display:flex;justify-content:space-between;padding-top:12px}
+</style>
+</head>
+<body>
+<div id="g01" data-composition-id="g01" data-width="1920" data-height="1080" data-fps="30" data-duration="6">
+  <div class="stage">
+    <div class="plate" id="g01-plate"></div>
+    <div class="scrim"></div>
+    <div class="safe">
+      <div class="mid">
+        <div class="kick" id="g01-kick"><span class="pill claim"><span class="dot"></span>McGregor, Texas · 15 Oct 2026</span></div>
+        <div class="t" id="g01-t">They built a <em>rocket you can park.</em></div>
+        <div class="bar" id="g01-bar"></div>
+        <div class="sub m-body" id="g01-sub">What Tesla actually showed — and the one number that decides whether it flies.</div>
+      </div>
+      <div class="foot" id="g01-foot"><div class="fr"></div><div class="frow">
+        <span class="m-sm">Photograph · MotorTrend</span><span class="m-sm">An investigation</span></div></div>
+    </div>
+    <div class="vig"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var tl=gsap.timeline({paused:true});
+  tl.fromTo("#g01-plate",{opacity:0,scale:1.085},{opacity:1,scale:1.0,duration:5.9,ease:"power2.out"},0)
+    .fromTo("#g01-kick",{opacity:0,y:10},{opacity:1,y:0,duration:.45,ease:"power3.out"},.25)
+    .fromTo("#g01-t",{opacity:0,y:26},{opacity:1,y:0,duration:.7,ease:"power3.out"},.55)
+    .fromTo("#g01-bar",{scaleX:0},{scaleX:1,duration:.5,ease:"power3.inOut"},1.25)
+    .fromTo("#g01-sub",{opacity:0,y:12},{opacity:1,y:0,duration:.55,ease:"power3.out"},1.45)
+    .to("#g01-foot",{opacity:1,duration:.5},1.7);
+  window.__timelines["g01"]=tl;
+})();
+</script>
+</body>
+</html>

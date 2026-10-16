@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>G05 — three trims, one flies</title>
+<link rel="stylesheet" href="../assets/css/system.css">
+<script src="../vendor/gsap.min.js"></script>
+<style>
+  #g05 .hd{position:absolute;left:0;top:4px}
+  #g05 .sub{position:absolute;left:0;top:36px}
+  #g05 .grid{position:absolute;left:0;right:0;top:170px;display:flex;gap:30px}
+  #g05 .card{flex:1;border:var(--rule) solid var(--steel);border-radius:2px;background:var(--ink-2);
+    padding:30px 30px 26px;opacity:0;position:relative;overflow:hidden}
+  #g05 .card .tag{position:absolute;right:0;top:0;padding:9px 16px;
+    font-family:"JetBrains Mono";font-weight:700;font-size:15px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink);background:var(--slate)}
+  #g05 .card.fly{border-color:var(--claim)}
+  #g05 .card.fly .tag{background:var(--claim)}
+  #g05 .name{font-family:"Archivo";font-weight:700;font-size:52px;letter-spacing:-.025em;color:var(--bone)}
+  #g05 .zero{display:flex;align-items:flex-end;gap:12px;margin-top:26px}
+  #g05 .zero .v{font-family:"JetBrains Mono";font-weight:700;font-size:78px;line-height:.9;
+    color:var(--bone);font-variant-numeric:tabular-nums}
+  #g05 .card.fly .zero .v{color:var(--claim)}
+  #g05 .zero .u{font-family:"JetBrains Mono";font-weight:500;font-size:26px;color:var(--slate);padding-bottom:10px}
+  #g05 .zlbl{margin-top:8px}
+  #g05 .specs{margin-top:28px;border-top:2px solid var(--steel);padding-top:18px}
+  #g05 .row{display:flex;justify-content:space-between;padding:9px 0}
+  #g05 .row .k{font-family:"JetBrains Mono";font-weight:500;font-size:17px;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--slate)}
+  #g05 .row .v{font-family:"JetBrains Mono";font-weight:700;font-size:19px;color:var(--bone);text-align:right}
+  #g05 .row .v.red{color:var(--claim)}
+  #g05 .price{margin-top:22px;border-top:2px solid var(--steel);padding-top:18px}
+  #g05 .price .p{font-family:"JetBrains Mono";font-weight:700;font-size:40px;color:var(--bone)}
+  #g05 .card.fly .price .p{font-size:34px;color:var(--claim)}
+  #g05 .price .pl{margin-top:7px}
+  #g05 .kicker{position:absolute;left:0;right:0;top:852px;opacity:0}
+  #g05 .kicker .k1{font-family:"Archivo";font-weight:700;font-size:64px;letter-spacing:-.025em;color:var(--bone)}
+  #g05 .kicker .k1 em{font-style:normal;color:var(--claim)}
+  #g05 .foot{position:absolute;left:0;right:0;bottom:0;opacity:0}
+  #g05 .foot .fr{height:2px;background:var(--steel)}
+  #g05 .foot .frow{display:flex;justify-content:space-between;padding-top:12px}
+</style>
+</head>
+<body>
+<div id="g05" data-composition-id="g05" data-width="1920" data-height="1080" data-fps="30" data-duration="34">
+  <div class="stage"><div class="safe">
+    <div class="hd m-lbl">Roadster — announced line-up, 15 Oct 2026</div>
+    <div class="sub d-md">Three trims. Only one flies.</div>
+
+    <div class="grid">
+      <div class="card" id="g05-c1"><div class="tag">Road ready</div>
+        <div class="name">Performance</div>
+        <div class="zero"><div class="v">1.6</div><div class="u">s</div></div>
+        <div class="zlbl m-lbl">0–60 mph · under</div>
+        <div class="specs">
+          <div class="row"><span class="k">Seats</span><span class="v">2</span></div>
+          <div class="row"><span class="k">Thrusters</span><span class="v">None</span></div>
+          <div class="row"><span class="k">Lift system</span><span class="v">Suction only</span></div>
+          <div class="row"><span class="k">Flies</span><span class="v">No</span></div>
+        </div>
+        <div class="price"><div class="p">$50,000</div><div class="pl m-lbl">reservation</div></div>
+      </div>
+
+      <div class="card" id="g05-c2"><div class="tag">Race ready</div>
+        <div class="name">Thrust</div>
+        <div class="zero"><div class="v">0.9</div><div class="u">s</div></div>
+        <div class="zlbl m-lbl">0–60 mph · under</div>
+        <div class="specs">
+          <div class="row"><span class="k">Seats</span><span class="v">2</span></div>
+          <div class="row"><span class="k">Thrusters</span><span class="v">Rear</span></div>
+          <div class="row"><span class="k">Lift system</span><span class="v">Suction + rear</span></div>
+          <div class="row"><span class="k">Flies</span><span class="v">No</span></div>
+        </div>
+        <div class="price"><div class="p">$250,000</div><div class="pl m-lbl">reservation</div></div>
+      </div>
+
+      <div class="card fly" id="g05-c3"><div class="tag">Air ready</div>
+        <div class="name">Rocket</div>
+        <div class="zero"><div class="v">0.59</div><div class="u">s</div></div>
+        <div class="zlbl m-lbl">0–60 mph · under</div>
+        <div class="specs">
+          <div class="row"><span class="k">Seats</span><span class="v red">1</span></div>
+          <div class="row"><span class="k">Thrusters</span><span class="v">10 · perimeter</span></div>
+          <div class="row"><span class="k">Lift system</span><span class="v">Full cold-gas</span></div>
+          <div class="row"><span class="k">Flies</span><span class="v red">Yes</span></div>
+        </div>
+        <div class="price"><div class="p">Invite only</div><div class="pl m-lbl">you do not apply</div></div>
+      </div>
+    </div>
+
+    <div class="kicker" id="g05-k">
+      <div class="k1">The car that leaves the ground <em>isn’t for sale.</em></div>
+    </div>
+
+    <div class="foot" id="g05-foot"><div class="fr"></div><div class="frow">
+      <span class="m-sm">Source · Tesla reveal event, 15 Oct 2026 · all figures claimed by Tesla</span>
+      <span class="m-sm">Fig. 05 — trim ladder</span></div></div>
+  </div><div class="vig"></div></div>
+</div>
+<script>
+(function(){
+  var tl=gsap.timeline({paused:true});
+  tl.fromTo("#g05 .hd",{opacity:0,y:-8},{opacity:1,y:0,duration:.4},0)
+    .fromTo("#g05 .sub",{opacity:0,y:12},{opacity:1,y:0,duration:.5,ease:"power3.out"},.1)
+    .to("#g05-foot",{opacity:1,duration:.5},.5);
+  // cards land on their spoken trim names
+  tl.fromTo("#g05-c1",{opacity:0,y:26},{opacity:1,y:0,duration:.5,ease:"power3.out"},3.55)
+    .fromTo("#g05-c2",{opacity:0,y:26},{opacity:1,y:0,duration:.5,ease:"power3.out"},11.78)
+    .fromTo("#g05-c3",{opacity:0,y:26},{opacity:1,y:0,duration:.5,ease:"power3.out"},19.49);
+  // "Notice what just happened" — dim the two that cannot fly
+  tl.to("#g05-c1",{opacity:.34,duration:.6,ease:"power2.inOut"},27.0)
+    .to("#g05-c2",{opacity:.34,duration:.6,ease:"power2.inOut"},27.15);
+  tl.fromTo("#g05-k",{opacity:0,y:18},{opacity:1,y:0,duration:.5,ease:"power3.out"},29.4);
+  window.__timelines["g05"]=tl;
+})();
+</script>
+</body>
+</html>
